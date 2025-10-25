@@ -1,0 +1,202 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+public class CPHInline
+{
+	private static HttpClient client;
+	string webhookUrl = "";
+	string webhookUsername = "Donut bot";
+	string webhookAvatarUrl = "https://cdn.discordapp.com/avatars/917361365377749042/f4908b3732da12a1d4d4d5224c3c7f6473.webp";
+	string twitchAvatarURL = "https://i.imgur.com/xGoEvn9.png";
+
+	public bool Execute()
+	{
+		CPH.TryGetArg("webhookUrl", out webhookUrl);
+		CPH.TryGetArg("__source", out string source);
+		CPH.TryGetArg("isTest", out bool isTest);
+		
+				switch (source)
+		{
+			case "TwitchChatMessage":
+				{
+					CPH.TryGetArg("message", out string message);
+					CPH.TryGetArg("user", out string user);
+					TwitchChatMessage(message, user);
+				}
+				break;
+				
+			case "YouTubeMessage":
+				{
+					CPH.TryGetArg("message", out string message);
+					CPH.TryGetArg("user", out string user);
+					CPH.TryGetArg("userId", out string userId);
+					CPH.TryGetArg("userProfileUrl", out string userProfileUrl);
+					YouTubeMessage(message, user, userId, userProfileUrl);
+				}
+				break;
+		}
+		
+		return true;
+	}
+
+	private async Task TwitchChatMessage(string user, string message = null)
+	{
+		var fieldsList = new List<object>()
+		{
+			new { name = "**User**", value = user, inline = true },
+			new { name = "\u200B", value = "\u200B", inline = true },
+      new { name = "\u200B", value = "\u200B", inline = true },
+		};
+
+		if (!string.IsNullOrEmpty(message))
+			fieldsList.Add(new { name = "💬 **Message**", value = message, inline = false });
+
+		fieldsList.Add(new { name = "🕐 **Time**", value = WhenTheThingHappened(), inline = false });
+		AddVODLink(fieldsList);
+
+		await SendDiscordNotification("Twitch message", 9442302, user, fieldsList);
+	}
+
+  
+	private async Task YouTubeMessage(string user, string userId, string userProfileUrl, string message = null)
+	{
+		var fieldsList = new List<object>()
+		{
+			new { name = "**User**", value = user, inline = true },
+			new { name = "\u200B", value = "\u200B", inline = true },
+			new { name = "**Recipient**", value = recipientUser, inline = true },
+			new { name = "🎁 **Tier**", value = tier, inline = false },
+			new { name = "🕐 **Time**", value = WhenTheThingHappened(), inline = false },
+		};
+    
+    if (!string.IsNullOrEmpty(message))
+			fieldsList.Add(new { name = "💬 **Message**", value = message, inline = false });
+
+		fieldsList.Add(new { name = "🕐 **Time**", value = WhenTheThingHappened(), inline = false });
+		AddVODLink(fieldsList);
+
+		await SendDiscordNotification("Twitch message", 9442302, user, fieldsList);
+	}
+
+// Helper Methods
+	private async Task SendDiscordNotification(string title, int color, string user, List<object> fields, string customAvatar = null)
+	{
+		if (string.IsNullOrEmpty(webhookUrl))
+			return;
+
+		if (client == null)
+			client = new HttpClient();
+
+		string avatarUrl = customAvatar ?? TwitchAvatarURL(user);
+    if els
+    string avatarUrl = customAvatar ?? userProfileUrl(user);           
+
+		var embed = new
+		{
+			title = title,
+			color = color,
+			thumbnail = new { url = avatarUrl },
+			fields = fields.ToArray(),
+		};
+
+		var payload = new
+		{
+			username = webhookUsername,
+			avatar_url = webhookAvatarUrl,
+			embeds = new[] { embed }
+		};
+
+		string jsonPayload = JsonConvert.SerializeObject(payload, new JsonSerializerSettings
+		{
+			StringEscapeHandling = StringEscapeHandling.Default
+		});
+
+		var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+		try
+		{
+			await client.PostAsync(webhookUrl, content);
+		}
+		catch (Exception ex)
+		{
+			CPH.LogError($"Discord webhook error: {ex.Message}");
+		}
+	}
+
+	private void AddVODLink(List<object> fields)
+	{
+		string vod = GetLatestVOD();
+		if (!string.IsNullOrEmpty(vod))
+			fields.Add(new { name = "🎬 **VOD**", value = vod, inline = false });
+	}
+
+	public string WhenTheThingHappened()
+	{
+		try
+		{
+			DateTime utcNow = DateTime.UtcNow;
+			long unixTimestamp = ((DateTimeOffset)utcNow).ToUnixTimeSeconds();
+			return string.Format("<t:{0}:f> (<t:{0}:R>)", unixTimestamp);
+		}
+		catch
+		{
+			return $"[{DateTime.Now:dddd dd-MM-yyyy HH:mm:ss}]";
+		}
+	}
+
+	public string TwitchAvatarURL(string user)
+	{
+		try
+		{
+			return CPH.TwitchGetExtendedUserInfoByLogin(user).ProfileImageUrl;
+		}
+		catch
+		{
+			return twitchAvatarURL;
+		}
+	}
+
+	public string GetLatestVOD()
+	{
+		try
+		{
+			CPH.TryGetArg("broadcastUser", out string broadcastUser);
+			HttpClient httpClient = new HttpClient();
+			string latestVOD = httpClient.GetStringAsync($"https://decapi.me/twitch/videos/{broadcastUser}").Result;
+			
+			var linkParser = new Regex(@"\b(?:https?://|www\.)\S+\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+			foreach(Match m in linkParser.Matches(latestVOD))
+				latestVOD = m.Value;
+			
+			string uptime = httpClient.GetStringAsync($"https://decapi.me/twitch/uptime/{broadcastUser}").Result;
+			
+			if (uptime.Contains("offline"))
+				return "";
+			
+			var timeSpan = uptime.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries).Select(part =>
+			{
+				int value = int.Parse(part.Split(' ')[0]);
+				if (part.Contains("day")) return TimeSpan.FromDays(value);
+				if (part.Contains("hour")) return TimeSpan.FromHours(value);
+				if (part.Contains("minute")) return TimeSpan.FromMinutes(value);
+				if (part.Contains("second")) return TimeSpan.FromSeconds(value);
+				return TimeSpan.Zero;
+			}).Aggregate((ts1, ts2) => ts1 + ts2);
+			
+			string hmsFormat = string.Format("{0:D2}h{1:D2}m{2:D2}s", (int)timeSpan.TotalHours, timeSpan.Minutes, timeSpan.Seconds);
+			
+			return $"[Watch Moment]({latestVOD}?t={hmsFormat})";
+		}
+		catch
+		{
+			return "";
+		}
+	}
+	
