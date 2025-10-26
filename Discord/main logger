@@ -129,13 +129,15 @@ public class CPHInline
 
 			case "TwitchBotEventSubConnected":
 				{
-					
+					CPH.TryGetArg("triggerName", out string BotEventSubConnected);
+					TwitchBotEventSubConnected(BotEventSubConnected);	
 				}
 				break;
 
 			case "TwitchBotEventSubDisconnected":
 				{
-					
+					CPH.TryGetArg("triggerName", out string BotEventSubDisconnected);
+					TwitchBotEventSubDisconnected(BotEventDisconnected);	
 				}
 				break;
 
