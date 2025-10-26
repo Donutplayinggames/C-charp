@@ -1,0 +1,1179 @@
+using System;
+using System.IO;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Globalization; // Needed for CultureInfo.InvariantCulture
+
+public class CPHInline
+{
+    private static HttpClient client;
+    string webhookUrl = "";
+    string webhookUsername = "Donut bot";
+    string webhookAvatarUrl = "https://cdn.discordapp.com/avatars/917361365377749042/f4908b3732da12a1d4d4d5224c3c7f6473.webp";
+    string twitchAvatarURL = "https://i.imgur.com/xGoEvn9.png";
+    string kickAvatarURL = "https://i.imgur.com/q0Dv9JZ.png";
+    string youtubeAvatarURL = "https://i.imgur.com/2FyVpuG.png";
+    string basePath = AppDomain.CurrentDomain.BaseDirectory;
+    
+    public bool Execute()
+    {
+        CPH.TryGetArg("webhookUrl", out webhookUrl);
+        CPH.TryGetArg("__source", out string source);
+        
+    if (source == "TwitchChatMessage")
+    {
+        CPH.TryGetArg("bits", out int bits);
+        if (bits > 0)
+        {
+            CPH.LogInfo("Ignoring cheer message - handled by cheer event");
+            return true;
+        }
+    }
+
+        switch (source)
+        {
+            case "TwitchAdRun":
+				{
+					CPH.TryGetArg("adLength", out string AdRunAdLength);
+					CPH.TryGetArg("adScheduled", out bool AdRunadScheduled);
+					TwitchAdRun(AdRunAdLength, AdRunadLengthMs, AdRunadScheduled);
+				}
+				break;
+
+            case "TwitchUpcomingAd":
+				{
+					CPH.TryGetArg("adLength", out string UpcomingAdLength);
+					CPH.TryGetArg("minutes", out bool Upcomingminutes);
+					CPH.TryGetArg("snoozesLeft", out bool UpcomingAdsnoozesLeft);
+					TwitchUpcomingAd(UpcomingAdLength, Upcomingminutes);
+				}
+				break;				
+
+			case "TwitchAnnouncement":
+				{
+					CPH.TryGetArg("announceColor", out string AnnouncementColor);
+					CPH.TryGetArg("message", out string AnnouncementMessage);
+					TwitchAnnouncement(AnnouncementColor, AnnouncementMessage);
+				}
+				break;
+
+			case "TwitchAutomaticRewardRedemption":
+				{
+					CPH.TryGetArg("rewardType", out string AutomaticRewardType);
+					CPH.TryGetArg("rewardCost", out string AutomaticRewardCost);
+					CPH.TryGetArg("user", out string AutomaticRewardUser);
+					CPH.TryGetArg("userInput", out string AutomaticRewardUserInput);
+					TwitchAutomaticRewardRedemption(AutomaticRewardType, AutomaticRewardCost, AutomaticRewardUser, AutomaticRewardUserInput);
+				}
+				break;
+
+			case "TwitchAutoModMessageHeld":
+				{
+					CPH.TryGetArg("category", out string MessageHeldcategory);
+					CPH.TryGetArg("rawInput", out string MessageHeldrawInput);
+					CPH.TryGetArg("user", out string MessageHeldUser);
+					CPH.TryGetArg("userInput", out string MessageHeldUserImput);
+					TwitchAutoModMessageHeld(MessageHeldcategory, MessageHeldrawInput, MessageHeldUser, MessageHeldUserImput);
+				}
+				break;
+
+			case "TwitchAutoModMessageUpdate":
+				{
+					CPH.TryGetArg("category", out string MessageUpdatecategory);
+					CPH.TryGetArg("rawInput", out string MessageUpdaterawInput);
+					CPH.TryGetArg("user", out string MessageUpdateUser);
+					CPH.TryGetArg("userInput", out string MessageUpdateUserImput);
+					TwitchAutoModMessageUpdate(MessageUpdatecategory, MessageUpdaterawInput, MessageUpdateUser, MessageUpdateUserImput);	
+				}
+				break;	
+
+			case "TwitchBetterTTVEmoteAdded":
+				{
+					CPH.TryGetArg("emote", out string TTVEmoteAdded);
+					TwitchBetterTTVEmoteAdded(TTVEmoteAdded);	
+				}
+				break;	
+
+			case "TwitchBetterTTVEmoteRemoved":
+				{
+					CPH.TryGetArg("emote", out string TTVEmoteRemoved);
+					TwitchBetterTTVEmoteRemoved(TTVEmoteRemoved);	
+				}
+				break;
+
+			case "TwitchBitsBadgeTier":
+				{
+					CPH.TryGetArg("user", out string BadgeTierUser);
+					TwitchBitsBadgeTier(BadgeTierUser);	
+				}
+				break;
+
+			case "TwitchBlockedTermsAdded":
+				{
+					CPH.TryGetArg("moderatorDisplayName", out string BlockedTermsAddedModerator);
+					CPH.TryGetArg("term.[#]", out string BlockedTermsAddedTerm);
+					TwitchBlockedTermsAdded(BlockedTermsAddedModerator, BlockedTermsAddedTerm);	
+				}
+				break;
+
+			case "TwitchBlockedTermsDeleted":
+				{
+					CPH.TryGetArg("moderatorDisplayName", out string BlockedTermsDeletedModerator);
+					CPH.TryGetArg("term.[#]", out string BlockedTermsDeletedTerm);
+					TwitchBlockedTermsDeleted(BlockedTermsDeletedModerator, BlockedTermsDeletedTerm);	
+				}
+				break;																																						
+
+			case "TwitchBotEventSubConnected":
+				{
+					
+				}
+				break;
+
+			case "TwitchBotEventSubDisconnected":
+				{
+					
+				}
+				break;
+
+			case "TwitchBotWhisper":
+				{
+					CPH.TryGetArg("rawInput", out string BotWisperrawInput);
+					CPH.TryGetArg("user", out string BotWhisperUsername);
+					TwitchBotWhisper(BotWisperrawInput, BotWhisperUsername);						
+				}
+				break;
+
+			case "TwitchCharityCompleted":
+					CPH.TryGetArg("charity.name", out string CharityCompletedname);
+    				CPH.TryGetArg("charity.description", out string CharityCompleteddescription);
+    				CPH.TryGetArg("charity.website", out string CharityCompletedwebsite);
+    				CPH.TryGetArg("charity.currentAmount.value", out double CharityCompletedcurrentAmountValue); 
+    				CPH.TryGetArg("charity.currentAmount.currency", out string CharityCompletedcurrentAmountcurrency);
+    				CPH.TryGetArg("charity.targetAmount.value", out double CharityCompletedtargetAmountValue);
+    				CPH.TryGetArg("charity.targetAmount.currency", out string CharityCompletedtargetAmountcurrency);
+							//DEBUG LOGS
+					//CPH.LogInfo($"[DEBUG] Current amount: {CharityCompletedcurrentAmountValue} {CharityCompletedcurrentAmountcurrency}");
+    				//CPH.LogInfo($"[DEBUG] Target amount: {CharityCompletedtargetAmountValue} {CharityCompletedtargetAmountcurrency}");
+					TwitchCharityCompleted(CharityCompletedname, CharityCompleteddescription, CharityCompletedwebsite, CharityCompletedcurrentAmountValue, CharityCompletedcurrentAmountcurrency, CharityCompletedtargetAmountValue, CharityCompletedtargetAmountcurrency);
+				}
+				break;
+
+			case "TwitchCharityDonation":
+				{
+					CPH.TryGetArg("charity.name", out string CharityDonationname);
+    				CPH.TryGetArg("charity.description", out string CharityDonationdescription);
+    				CPH.TryGetArg("charity.website", out string CharityDonationwebsite);
+    				CPH.TryGetArg("charity.currentAmount.value", out double CharityDonationcurrentAmountValue); 
+    				CPH.TryGetArg("charity.currentAmount.currency", out string CharityDonationcurrentAmountcurrency);
+    				CPH.TryGetArg("charity.targetAmount.value", out double CharityDonationtargetAmountValue);
+    				CPH.TryGetArg("charity.targetAmount.currency", out string CharityDonationtargetAmountcurrency);
+							//DEBUG LOGS
+					//CPH.LogInfo($"[DEBUG] Current amount: {CharityDonationcurrentAmountValue} {CharityDonationcurrentAmountcurrency}");
+    				//CPH.LogInfo($"[DEBUG] Target amount: {CharityDonationtargetAmountValue} {CharityDonationtargetAmountcurrency}");
+					TwitchCharityDonation(CharityDonationname, CharityDonationdescription, CharityDonationwebsite, CharityDonationcurrentAmountValue, CharityDonationcurrentAmountcurrency, CharityDonationtargetAmountValue, CharityDonationtargetAmountcurrency);
+				}
+				break;	
+
+			case "TwitchCharityProgress":
+				{
+					CPH.TryGetArg("charity.name", out string CharityProgressname);
+    				CPH.TryGetArg("charity.description", out string CharityProgressdescription);
+    				CPH.TryGetArg("charity.website", out string CharityProgresswebsite);
+    				CPH.TryGetArg("charity.currentAmount.value", out double CharityProgresscurrentAmountValue); 
+    				CPH.TryGetArg("charity.currentAmount.currency", out string CharityProgresscurrentAmountcurrency);
+    				CPH.TryGetArg("charity.targetAmount.value", out double CharityProgresstargetAmountValue);
+    				CPH.TryGetArg("charity.targetAmount.currency", out string CharityProgresstargetAmountcurrency);
+							//DEBUG LOGS
+					//CPH.LogInfo($"[DEBUG] Current amount: {CharityProgresscurrentAmountValue} {CharityProgresscurrentAmountcurrency}");
+    				//CPH.LogInfo($"[DEBUG] Target amount: {CharityProgresstargetAmountValue} {CharityProgresstargetAmountcurrency}");
+					TwitchCharityStarted(CharityProgressname, CharityProgressdescription, CharityProgresswebsite, CharityProgresscurrentAmountValue, CharityProgresscurrentAmountcurrency, CharityProgresstargetAmountValue, CharityProgresstargetAmountcurrency);
+				}
+				break;	
+
+  			case "TwitchCharityStarted":
+				{
+					CPH.TryGetArg("charity.name", out string CharityStartedname);
+    				CPH.TryGetArg("charity.description", out string CharityStarteddescription);
+    				CPH.TryGetArg("charity.website", out string CharityStartedwebsite);
+    				CPH.TryGetArg("charity.currentAmount.value", out double CharityStartedcurrentAmountValue); 
+    				CPH.TryGetArg("charity.currentAmount.currency", out string CharityStartedcurrentAmountcurrency);
+    				CPH.TryGetArg("charity.targetAmount.value", out double CharityStartedtargetAmountValue);
+    				CPH.TryGetArg("charity.targetAmount.currency", out string CharityStartedtargetAmountcurrency);
+							//DEBUG LOGS
+					//CPH.LogInfo($"[DEBUG] Current amount: {CharityStartedcurrentAmountValue} {CharityStartedcurrentAmountcurrency}");
+    				//CPH.LogInfo($"[DEBUG] Target amount: {CharityStartedtargetAmountValue} {CharityStartedtargetAmountcurrency}");
+					TwitchCharityStarted(CharityStartedname, CharityStarteddescription, CharityStartedwebsite, CharityStartedcurrentAmountValue, CharityStartedcurrentAmountcurrency, CharityStartedtargetAmountValue, CharityStartedtargetAmountcurrency);
+				}
+				break; 
+
+  			case "TwitchChatCleared":
+				{
+				CPH.TryGetArg("triggerName", out string ChatCleared);
+				TwitchChatCleared(ChatCleared);
+				}
+				break;
+
+			case "TwitchChatEmoteModeOff":
+				{
+				CPH.TryGetArg("emoteMode", out bool EmoteModeOff);
+				CPH.TryGetArg("emoteOnly", out bool EmoteModeOffOnly);
+				TwitchChatEmoteModeOff(EmoteModeOff, EmoteModeOffOnly);					
+				}
+				break;
+
+			case "TwitchChatEmoteModeOn":
+				{
+				CPH.TryGetArg("emoteMode", out bool EmoteModeOn);
+				CPH.TryGetArg("emoteOnly", out bool EmoteModeOnOnly);
+				TwitchChatEmoteModeOn(EmoteModeOn, EmoteModeOnOnly);							
+				}
+				break;	
+
+			case "TwitchChatFollowerModeChanged":
+				{
+				CPH.TryGetArg("followerMode", out bool FollowerModeChanged);
+				CPH.TryGetArg("followerModeDuration", out int followerModeDuration);
+				TwitchChatFollowerModeChanged(FollowerModeChanged, followerModeDuration);						
+				}
+				break;
+
+			case "TwitchChatFollowerModeOff":
+				{
+				CPH.TryGetArg("followerMode", out bool TwitchChatFollowerModeOff);
+				CPH.TryGetArg("followerModeDuration", out int TwitchChatFollowerModeOffDuration);
+				TwitchChatFollowerModeOff(TwitchChatFollowerModeOff, TwitchChatFollowerModeOffDuration);						
+				}
+				break;
+
+			case "TwitchChatFollowerModeOn":
+				{
+				CPH.TryGetArg("followerMode", out bool TwitchChatFollowerModeOn);
+				CPH.TryGetArg("followerModeDuration", out int TwitchChatFollowerModeOnDuration);
+				TwitchChatFollowerModeOn(TwitchChatFollowerModeOn, TwitchChatFollowerModeOnDuration);						
+				}
+				break;
+
+			case "TwitchChatMessageDeleted":
+				{
+				CPH.TryGetArg("user", out string deletedUser);
+				CPH.TryGetArg("message", out string deletedMessage);
+				TwitchChatMessageDeleted(deletedUser, deletedMessage);
+				}
+				break;															
+
+			case "TwitchChatSlowModeChanged":
+				{
+				CPH.TryGetArg("slowMode", out bool ChatSlowModeChanged);
+				CPH.TryGetArg("slowModeWaitTime", out int TwitchChatSlowModeWaitTime);
+				TwitchChatSlowModeChanged(ChatSlowModeChanged, TwitchChatSlowModeWaitTime);
+				}
+				break;
+
+			case "TwitchChatSlowModeOff":
+				{
+				CPH.TryGetArg("slowMode", out bool ChatSlowModeOff);
+				CPH.TryGetArg("slowModeWaitTime", out int TwitchChatSlowModeOffWaitTime);
+				TwitchChatSlowModeOff(ChatSlowModeOff, TwitchChatSlowModeOffWaitTime);
+				}
+				break;
+
+			case "TwitchChatSlowModeOn":
+				{
+				CPH.TryGetArg("slowMode", out bool ChatSlowModeOn);
+				CPH.TryGetArg("slowModeWaitTime", out int TwitchChatSlowModeOnWaitTime);
+				TwitchChatSlowModeOn(ChatSlowModeOn, TwitchChatSlowModeOnWaitTime);
+				}
+				break;
+
+			case "TwitchChatSubscriberModeOff":
+				{
+				CPH.TryGetArg("subscriberOnly", out bool subscriberModeOff);
+				TwitchChatSubscriberModeOff(subscriberModeOff);					
+				}
+				break;
+
+			case "TwitchChatSubscriberModeOn":
+				{
+				CPH.TryGetArg("subscriberOnly", out bool subscriberModeOn);
+				TwitchChatSubscriberModeOn(subscriberModeOn);					
+				}
+				break;
+
+			case "TwitchChatUniqueModeOff":
+				{
+				CPH.TryGetArg("uniqueMode", out bool UniqueModeOff);
+				TwitchChatUniqueModeOff(UniqueModeOff);					
+				}
+				break;					
+
+
+			case "TwitchChatUniqueModeOn":
+				{
+				CPH.TryGetArg("uniqueMode", out bool UniqueModeOn);
+				TwitchChatUniqueModeOn(UniqueModeOn);					
+				}
+				break;
+
+			case "TwitchCheer":
+            {
+                CPH.TryGetArg("user", out string cheerUser);
+                CPH.TryGetArg("bits", out int bits);
+                CPH.TryGetArg("message", out string cheerMessage);
+                TwitchCheer(cheerUser, bits, cheerMessage);
+            }
+            break;
+
+			case "TwitchCoinCheer":
+				{
+				}
+				break;
+
+			case "TwitchCommunityGoalContribution":
+				{
+				CPH.TryGetArg("contributed", out int CommunityGoalContribution);
+				CPH.TryGetArg("userContributed", out int CommunityGoaluserContributed),
+                CPH.TryGetArg("title", out string CommunityGoalContributionTitle);
+                CPH.TryGetArg("userTotalContributed", out int CommunityGoalContributionUserTotalContributed);
+                CPH.TryGetArg("goalAmount", out string CommunityGoalContributionGoalAmount);
+				CPH.TryGetArg("percentComplete", out string CommunityGoalContributionpercentComplete);
+				CPH.TryGetArg("durationDays", out int CommunityGoalContributionDurationDays);
+				CPH.TryGetArg("daysLeft", out int CommunityGoalContributionDaysLeft);				
+                TwitchCheer(CommunityGoalContribution, CommunityGoalContributionTitle, CommunityGoalContributionGoalAmount);
+				}
+				break;
+
+			case "TwitchCommunityGoalEnded":
+				{
+				}
+				break;
+
+			case "TwitchFirstWord":
+				{
+				}
+				break;														
+
+			case "TwitchFollow":
+				{
+					CPH.TryGetArg("user", out string followUser);
+					TwitchFollow(followUser).GetAwaiter().GetResult();
+				}
+				break;
+
+			case "TwitchGiftBomb":
+				{
+					CPH.TryGetArg("user", out string giftBombUser);
+					CPH.TryGetArg("gifts", out int gifts);
+					CPH.TryGetArg("tier", out string giftBombTier);
+					TwitchGiftBomb(giftBombUser, gifts, giftBombTier).GetAwaiter().GetResult();
+				}
+				break;
+
+			case "TwitchGiftPaidUpgrade":
+				{
+
+				}
+				break;
+
+			case "TwitchGiftSub":
+				{
+					CPH.TryGetArg("user", out string giftSubUser);
+					CPH.TryGetArg("recipientUser", out string recipientUser);
+					CPH.TryGetArg("tier", out string giftSubTier);
+					TwitchGiftSub(giftSubUser, recipientUser, giftSubTier).GetAwaiter().GetResult();
+				}
+				break;
+
+			case "TwitchGoalBegin":
+				{
+					CPH.TryGetArg("goalcurrentAmount", out int goalcurrentAmount);
+					CPH.TryGetArg("goaldesscription", out string goaldescription);
+					CPH.TryGetArg("goaltargetAmount", out string goaltargetAmount);
+					CPH.TryGetArg("goaltype", out string goaltype);
+					TwitchGoalBegin(goaldescription, goaltargetAmount, goaltype).GetAwaiter().GetResult();
+				}
+				break;
+
+			case "TwitchGoalEnd":
+				{
+
+				}
+				break;
+
+			case "TwitchGoalProgress":
+				{
+
+				}
+				break;
+
+			case "TwitchGuestStarGuestUpdate":
+				{
+
+				}
+				break;
+
+			case "TwitchGuestStarSessionBegin":
+				{
+				}
+				break;
+
+			case "TwitchGuestStarSessionEnd":
+				{
+				}
+				break;
+
+			case "TwitchGuestStarSettingsUpdate":
+				{
+				}
+				break;	
+
+			case "TwitchGuestStarSlotUpdate":
+				{
+				}
+				break;
+
+			case "TwitchHypeChat":
+				{
+				}
+				break;																	
+
+			case "TwitchHypeChatLevel":
+				{
+				}
+				break;
+
+			case "TwitchHypeTrainEnd":
+				{
+					CPH.TryGetArg("user", out string hypeEndUser);
+					CPH.TryGetArg("percentDecimal", out decimal percentDecimal);
+					CPH.TryGetArg("level", out int hypeEndLevel);
+					CPH.TryGetArg("contributors", out string contributors);
+					CPH.TryGetArg("top.bits.user", out string topBitsUser);
+					CPH.TryGetArg("top.bits.total", out int topBitsTotal);
+					TwitchHypeTrainEnd(hypeEndUser, percentDecimal, hypeEndLevel, contributors, topBitsUser, topBitsTotal).GetAwaiter().GetResult();
+				}
+				break;
+
+			case "TwitchHypeTrainLevelUp":
+				{
+					CPH.TryGetArg("user", out string hypeLevelUpUser);
+					CPH.TryGetArg("percentDecimal", out decimal hypeLevelUpPercent);
+					CPH.TryGetArg("level", out int hypeLevelUpLevel);
+					TwitchHypeTrainLevelUp(hypeLevelUpUser, hypeLevelUpPercent, hypeLevelUpLevel).GetAwaiter().GetResult();
+				}
+				break;
+
+			case "TwitchHypeTrainStart":
+				{
+					CPH.TryGetArg("user", out string hypeStartUser);
+					TwitchHypeTrainStart(hypeStartUser);
+				}
+				break;
+
+			case "TwitchHypeTrainUpdate":
+				{
+					CPH.TryGetArg("user", out string hypeUpdateUser);
+					CPH.TryGetArg("percentDecimal", out decimal hypeUpdatePercent);
+					CPH.TryGetArg("level", out int hypeUpdateLevel);
+					TwitchHypeTrainUpdate(hypeUpdateUser, hypeUpdatePercent, hypeUpdateLevel).GetAwaiter().GetResult();
+				}
+				break;
+
+			case "TwitchModeratorAdded":
+				{
+				}
+				break;				
+
+			case "TwitchModeratorRemoved":
+				{
+				}
+				break;
+
+			case "TwitchPayItForward":
+				{
+				}
+				break;
+
+			case "TwitchPermittedTermsAdded":
+				{
+				}
+				break;
+
+			case "TwitchPermittedTermsDeleted":
+				{
+				}
+				break;
+
+			case "TwitchPollArchived":
+				{
+				}
+				break;																					
+
+			case "TwitchPollCompleted":
+				{
+					CPH.TryGetArg("poll.Title", out string pollCompletedTitle);
+					CPH.TryGetArg("poll.choices.count", out int pollCompletedChoiceCount);
+					CPH.TryGetArg("poll.winningChoice.id", out string winningChoiceID);
+					CPH.TryGetArg("poll.totalVotes", out int totalVotes);
+					
+					// Construct a list of choices
+					List<JObject> pollCompletedChoices = new List<JObject>();
+					for (int i = 0; i < pollCompletedChoiceCount; i++)
+					{
+						JObject choice = new JObject();
+						
+						CPH.TryGetArg($"poll.choice{i}.id", out string choiceID);
+						CPH.TryGetArg($"poll.choice{i}.title", out string choiceTitle);
+						CPH.TryGetArg($"poll.choice{i}.totalVotes", out int choiceVotes);
+						choice["id"] = choiceID;
+						choice["title"] = choiceTitle;
+						choice["totalVotes"] = choiceVotes;
+						
+						pollCompletedChoices.Add(choice);
+					}
+					
+					TwitchPollCompleted(pollCompletedTitle, pollCompletedChoices, winningChoiceID, totalVotes).GetAwaiter().GetResult();
+				}	
+				break;
+
+			case "TwitchPollCreated":
+				{
+					CPH.TryGetArg("poll.Title", out string pollCreatedTitle);
+					CPH.TryGetArg("poll.Duration", out int duration);
+					CPH.TryGetArg("poll.choices.count", out int pollCreatedChoiceCount);
+					
+					// Construct a list of choices
+					List<JObject> pollCreatedChoices = new List<JObject>();
+					for (int i = 0; i < pollCreatedChoiceCount; i++)
+					{
+						JObject choice = new JObject();
+						
+						CPH.TryGetArg($"poll.choice{i}.id", out string pollCreatedChoiceID);
+						CPH.TryGetArg($"poll.choice{i}.title", out string pollCreatedChoiceTitle);
+						choice["id"] = pollCreatedChoiceID;
+						choice["title"] = pollCreatedChoiceTitle;
+						
+						pollCreatedChoices.Add(choice);
+					}
+					
+					TwitchPollCreated(pollCreatedTitle, duration, pollCreatedChoices).GetAwaiter().GetResult();
+				}
+				break;
+
+			case "TwitchPollTerminated":
+				{
+				}
+				break;
+
+			case "TwitchPollUpdated":
+				{
+				}
+				break;	
+
+			case "TwitchPowerUp":
+				{
+				}
+				break;
+
+			case "TwitchPredictionCanceled":
+				{
+				}
+				break;	
+
+			case "TwitchPredictionCompleted":
+				{
+					CPH.TryGetArg("prediction.Title", out string predictionCompletedTitle);
+					CPH.TryGetArg("prediction.winningOutcome.id", out string winningOutcomeID);
+					
+					int totalPoints = 0;
+					
+					// Construct a list of outcomes
+					// Twitch doesn't tell us how many outcomes are in the prediction
+					// but currently there is a max of 10 outcomes, so just loop 
+					// 10 times and add outcome if it exists
+					List<JObject> predictionCompletedOutcomes = new List<JObject>();
+					for (int i = 0; i < 10; i++)
+					{
+						JObject outcome = new JObject();
+						
+						CPH.TryGetArg($"prediction.outcome{i}.id", out string outcomeID);
+						
+						// Exit loop if outcome doesn't exist
+						if (string.IsNullOrEmpty(outcomeID))
+							break;
+							
+						CPH.TryGetArg($"prediction.outcome{i}.title", out string outcomeTitle);
+						CPH.TryGetArg($"prediction.outcome{i}.points", out int outcomePoints);
+						outcome["id"] = outcomeID;
+						outcome["title"] = outcomeTitle;
+						outcome["points"] = outcomePoints;
+						
+						predictionCompletedOutcomes.Add(outcome);
+						
+						totalPoints += outcomePoints;
+					}
+					
+					TwitchPredictionCompleted(predictionCompletedTitle, predictionCompletedOutcomes, winningOutcomeID, totalPoints).GetAwaiter().GetResult();
+				}
+				break;
+
+			case "TwitchPredictionCreated":
+				{
+					CPH.TryGetArg("prediction.Title", out string predictionCreatedTitle);
+					CPH.TryGetArg("prediction.PredictionWindow", out int predictionWindow);
+					
+					// Construct a list of outcomes
+					// Twitch doesn't tell us how many outcomes are in the prediction
+					// but currently there is a max of 10 outcomes, so just loop 
+					// 10 times and add outcome if it exists
+					List<JObject> predictionCreatedOutcomes = new List<JObject>();
+					for (int i = 0; i < 10; i++)
+					{
+						JObject outcome = new JObject();
+						
+						CPH.TryGetArg($"prediction.outcome{i}.id", out string predictionCreatedOutcomeID);
+						
+						// Exit loop if outcome doesn't exist
+						if (string.IsNullOrEmpty(predictionCreatedOutcomeID))
+							break;
+						
+						CPH.TryGetArg($"prediction.outcome{i}.title", out string predictionCreatedOutcomeTitle);
+						outcome["id"] = predictionCreatedOutcomeID;
+						outcome["title"] = predictionCreatedOutcomeTitle;
+						
+						predictionCreatedOutcomes.Add(outcome);
+					}
+					
+					TwitchPredictionCreated(predictionCreatedTitle, predictionWindow, predictionCreatedOutcomes).GetAwaiter().GetResult();
+				}
+				break;
+
+			case"TwitchPredictionLocked":
+				{
+				}
+				break;	
+
+			case "TwitchPredictionUpdated":
+				{
+				}
+				break;	
+
+			case "TwitchPresentViewers":
+				{
+				}
+				break;	
+
+			case "TwitchPrimePaidUpgrade":
+				{
+				}
+				break;
+
+			case "TwitchPyramidBroken":
+				{
+				}
+				break;	
+
+			case "TwitchPyramidSuccess":
+				{
+				}
+				break;
+
+			case "TwitchRaid":
+				{
+					CPH.TryGetArg("user", out string raidUser);
+					CPH.TryGetArg("viewers", out int raidViewers);
+					TwitchRaid(raidUser, raidViewers).GetAwaiter().GetResult();
+				}
+				break;
+
+			case "TwitchRaidCancelled":
+				{
+				}
+				break;
+
+			case "TwitchRaidSend":
+				{
+				}
+				break;
+
+			case "TwitchRaidStart":
+				{
+					CPH.TryGetArg("broadcastUser", out string broadcastUser);
+					CPH.TryGetArg("raidUser", out string raidStartUser);
+					CPH.TryGetArg("raidUserProfileImageUrl", out string raidUserProfileImageUrl);
+					CPH.TryGetArg("viewers", out int raidStartViewers);
+					TwitchRaidStart(broadcastUser, raidStartUser, raidUserProfileImageUrl, raidStartViewers).GetAwaiter().GetResult();
+				}
+				break;
+
+			case "TwitchReSub":
+				{
+					CPH.TryGetArg("user", out string resubUser);
+					CPH.TryGetArg("tier", out string resubTier);
+					CPH.TryGetArg("monthStreak", out int monthStreak);
+					CPH.TryGetArg("cumulative", out int cumulative);
+					CPH.TryGetArg("rawInput", out string resubRawInput);
+					TwitchReSub(resubUser, resubTier, monthStreak, cumulative, resubRawInput).GetAwaiter().GetResult();
+				}
+				break;	
+
+			case "TwitchRewardCreated":
+				{
+				}
+				break;	
+
+			case "TwitchRewardDeleted":
+				{
+				}
+				break;
+
+			case "TwitchRewardRedemption":
+				{
+					CPH.TryGetArg("user", out string rewardUser);
+					CPH.TryGetArg("rewardName", out string rewardName);
+					CPH.TryGetArg("rewardCost", out int rewardCost);
+					CPH.TryGetArg("rawInput", out string rewardRawInput);
+					TwitchRewardRedemption(rewardUser, rewardName, rewardCost, rewardRawInput).GetAwaiter().GetResult();
+				}
+				break;
+
+			case "TwitchRewardRedemptionUpdated":
+				{
+				}
+				break;	
+
+			case "TwitchRewardUpdated":
+				{
+				}
+				break;
+
+			case "TwitchSevenTVEmoteAdded":
+				{
+				}
+				break;
+
+			case "TwitchSevenTVEmoteRemoved":
+				{
+				}
+				break;																																																																			
+
+			case "TwitchSharedChatAnnouncement":
+				{
+				}
+				break;	
+
+			case "TwitchSharedChatCommunitySubGift":
+				{
+				}
+				break;	
+
+			case "TwitchSharedChatGiftPaidUpgrade":
+				{
+				}
+				break;
+
+			case "TwitchSharedChatMessageDeleted":
+				{
+				}
+				break;
+
+			case "TwitchSharedChatPayItForward":
+				{
+				}
+				break;	
+
+			case "TwitchSharedChatPrimePaidUpgrade":
+				{
+				}
+				break;
+
+			case "TwitchSharedChatRaid":
+				{
+				}
+				break;
+
+			case "TwitchSharedChatResub":
+				{
+				}
+				break;	
+
+			case "TwitchSharedChatSessionBegin":
+				{
+				}
+				break;	
+
+			case "TwitchSharedChatSessionEnd":
+				{
+				}
+				break;
+
+			case "TwitchSharedChatSessionUpdate":
+				{
+				}
+				break;	
+
+			case "TwitchSharedChatSub":
+				{
+				}
+				break;
+
+			case "TwitchSharedChatSubGift":
+				{
+				}
+				break;		
+
+			case "TwitchSharedChatUserBanned":
+				{
+				}
+				break;	
+
+			case "TwitchSharedChatUserTimedout":
+				{
+				}
+				break;
+
+			case "TwitchSharedChatUserUnbanned":
+				{
+				}
+				break;	
+
+			case "TwitchSharedChatUserUntimedout":
+				{
+				}
+				break;	
+
+			case "TwitchShieldModeBegin":
+				{
+				}
+				break;	
+
+			case "TwitchShieldModeEnd":
+				{
+				}
+				break;	
+
+			case "TwitchShoutoutCreated":
+				{
+				}
+				break;
+
+			case "TwitchShoutoutReceived":
+				{
+				}
+				break;	
+
+			case "TwitchStreamOffline":
+				{
+				}
+				break;	
+
+			case "TwitchStreamOnline":
+				{
+				}
+				break;
+
+			case "TwitchStreamUpdate":
+				{
+					CPH.TryGetArg("gameUpdate", out bool gameUpdate);
+					CPH.TryGetArg("statusUpdate", out bool statusUpdate);
+					CPH.TryGetArg("gameBoxArt", out string gameBoxArt);
+					CPH.TryGetArg("gameName", out string gameName);
+					CPH.TryGetArg("status", out string status);
+					TwitchStreamUpdate(gameUpdate, statusUpdate, gameBoxArt, gameName, status).GetAwaiter().GetResult();
+				}
+				break;	
+
+			case "TwitchStreamUpdateGameOnConnect":
+				{
+				}
+				break;
+
+			case "TwitchSub":
+				{
+					CPH.TryGetArg("user", out string subUser);
+					CPH.TryGetArg("tier", out string subTier);
+					CPH.TryGetArg("rawInput", out string subRawInput);
+					TwitchSub(subUser, subTier, subRawInput).GetAwaiter().GetResult();
+				}
+				break;	
+
+			case "TwitchSubCounterRollover":
+				{
+				}
+				break;
+
+			case "TwitchSuspiciousUserMessage":
+				{
+				}
+				break;	
+
+			case "TwitchSuspiciousUserUpdate":
+				{
+				}
+				break;	
+
+			case "TwitchUnbanRequestApproved":
+				{
+					CPH.TryGetArg("user", out string unbanApprovedUser);
+					CPH.TryGetArg("moderatorDisplayName", out string unbanApprovedModerator);
+					CPH.TryGetArg("message", out string unbanApprovedMessage);
+					TwitchUnbanRequestApproved(unbanApprovedUser, unbanApprovedModerator, unbanApprovedMessage).GetAwaiter().GetResult();
+				}
+				break;	
+
+			case "TwitchUnbanRequestCreated":
+				{
+					CPH.TryGetArg("user", out string unbanCreatedUser);
+					CPH.TryGetArg("text", out string unbanCreatedText);
+					TwitchUnbanRequestCreated(unbanCreatedUser, unbanCreatedText);
+				}
+				break;
+
+			case "TwitchUnbanRequestDenied":
+				{
+					CPH.TryGetArg("user", out string unbanDeniedUser);
+					CPH.TryGetArg("moderatorDisplayName", out string unbanDeniedModerator);
+					CPH.TryGetArg("message", out string unbanDeniedMessage);
+					TwitchUnbanRequestDenied(unbanDeniedUser, unbanDeniedModerator, unbanDeniedMessage);
+				}
+				break;
+
+			case "TwitchUpcomingAd":
+				{
+				}
+				break;
+
+			case "TwitchUserBanned":
+				{
+					CPH.TryGetArg("user", out string bannedUser);
+					CPH.TryGetArg("createdByDisplayName", out string bannedCreatedBy);
+					TwitchUserBanned(bannedUser, bannedCreatedBy);
+				}
+				break;																																																																																																																																														
+
+			case "TwitchUserTimedOut":
+				{
+					CPH.TryGetArg("user", out string timedOutUser);
+					CPH.TryGetArg("createdByDisplayName", out string timedOutCreatedBy);
+					CPH.TryGetArg("reason", out string timedOutReason);
+					TwitchUserTimedOut(timedOutUser, timedOutCreatedBy, timedOutReason);
+				}
+				break;
+
+			case "TwitchUserUnbanned":
+				{
+					CPH.TryGetArg("user", out string unbannedUser);
+					CPH.TryGetArg("createdByDisplayName", out string unbannedCreatedBy);
+					TwitchUserUnbanned(unbannedUser, unbannedCreatedBy);
+				}
+				break;	
+
+			case "TwitchUserUntimedOut":
+				{
+					CPH.TryGetArg("user", out string untimedOutUser);
+					CPH.TryGetArg("createdByDisplayName", out string untimedOutCreatedBy);
+					TwitchUserUntimedOut(untimedOutUser, untimedOutCreatedBy);
+				}
+				break;										
+
+			case "TwitchViewerCountUpdate":
+				{
+				}
+				break;
+
+			case "TwitchVipAdded":
+				{
+				}
+				break;
+
+			case "TwitchVipRemoved":
+				{
+				}
+				break;
+
+
+			case "TwitchWarnedUser":
+				{
+					CPH.TryGetArg("user", out string warnedUser);
+					CPH.TryGetArg("moderator.userName", out string moderatorUserName);
+					CPH.TryGetArg("reason", out string warnedReason);
+					TwitchWarnedUser(warnedUser, moderatorUserName, warnedReason);
+				}
+				break;
+
+			case "TwitchWarningAcknowledged":
+				{
+					CPH.TryGetArg("user", out string warningAckUser);
+					TwitchWarningAcknowledged(warningAckUser);
+				}
+				break;	
+
+			case "TwitchWatchStreak":
+				{
+				}
+				break;	
+
+			case "TwitchWhisper":
+				{
+				}
+				break;
+
+			case "TwitchChatMessage":
+				{
+				CPH.TryGetArg("message", out string message);
+				CPH.TryGetArg("user", out string user);
+				PostTwitchChatMessage(message, user);
+				LogTwitchChatMessage(message, user);
+				}
+				break;
+			
+				case "KickChatMessage":
+				{
+				CPH.TryGetArg("message", out string message);
+				CPH.TryGetArg("user", out string user);
+				PostKickChatMessage(message, user);
+				LogKickChatMessage(message, user);
+				}
+				break;
+			
+				case "YouTubeMessage":
+				{
+				CPH.TryGetArg("message", out string message);
+				CPH.TryGetArg("user", out string user);
+				CPH.TryGetArg("userId", out string userId);
+				CPH.TryGetArg("userProfileUrl", out string userProfileUrl);
+				PostYouTubeMessage(message, user, userId, userProfileUrl);
+				LogYouTubeChatMessage(message, user);
+				}	           
+				break;
+            // Add other cases here if needed
+        }
+        
+        return true;
+    }
+    
+
+    public void TwitchCharityStarted(string CharityStartedname, string CharityStarteddescription, string CharityStartedwebsite, double CharityStartedcurrentAmountValue, string CharityStartedcurrentAmountcurrency, double CharityStartedtargetAmountValue, string CharityStartedtargetAmountcurrency)
+    {
+        try
+        {
+            string today = DateTime.Now.ToString("yyyy-MM-dd");
+            string folderPath = $"{basePath}Donuts logs";
+            // NOTE: I'm leaving the file extension as you had it, though it's unconventional.
+            string filePath = $"{folderPath}\\{today}.cum"; 
+            
+            Directory.CreateDirectory(folderPath);
+            
+            using (StreamWriter writer = File.AppendText(filePath))
+            {
+                writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | {CharityStartedname}: {CharityStartedwebsite} {CharityStartedcurrentAmountValue} {CharityStartedcurrentAmountcurrency} {CharityStartedtargetAmountValue} {CharityStartedtargetAmountcurrency}");
+            }
+        }
+        catch (Exception ex)
+        {
+            CPH.LogError($"Error logging Twitch chat: {ex.Message}");
+        }
+    }
+
+    public void TwitchCheer(string User, int bits, string Message)
+    {
+        try
+        {
+            string today = DateTime.Now.ToString("yyyy-MM-dd");
+            string folderPath = $"{basePath}Donuts logs";
+            // NOTE: I'm leaving the file extension as you had it, though it's unconventional.
+            string filePath = $"{folderPath}\\{today}.cum"; 
+            
+            Directory.CreateDirectory(folderPath);
+            
+            using (StreamWriter writer = File.AppendText(filePath))
+            {
+                writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | Cheer from {User}: ({bits} bits) {Message}");
+            }                                                                                           
+        }
+        catch (Exception ex)
+        {
+            CPH.LogError($"Error logging Twitch chat: {ex.Message}");
+        }
+    }    
+    
+    // ... (Your other methods Log for kick)
+    
+    public void LogKickChatMessage(string message, string user)
+    {
+        try
+        {
+            string today = DateTime.Now.ToString("yyyy-MM-dd");
+            string folderPath = $"{basePath}Donuts logs";
+            string filePath = $"{folderPath}\\{today}.cum";
+            
+            Directory.CreateDirectory(folderPath);
+            
+            using (StreamWriter writer = File.AppendText(filePath))
+            {
+                writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}     Kick | {user}: {message}");
+            }
+        }
+        catch (Exception ex)
+        {
+            CPH.LogError($"Error logging Kick chat: {ex.Message}");
+        }
+    }
+    
+// ... (Your other methods Log for Youtube)
+
+    public void LogYouTubeChatMessage(string message, string user)
+    {
+        try
+        {
+            string today = DateTime.Now.ToString("yyyy-MM-dd");
+            string folderPath = $"{basePath}Donuts logs";
+            string filePath = $"{folderPath}\\{today}.cum";
+            
+            Directory.CreateDirectory(folderPath);
+            
+            using (StreamWriter writer = File.AppendText(filePath))
+            {
+                writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()} YouTube | {user}: {message}");
+            }
+        }
+        catch (Exception ex)
+        {
+            CPH.LogError($"Error logging YouTube chat: {ex.Message}");
+        }
+    }
+    
+    public string WhenTheThingHappened()
+    {
+        try
+        {
+            DateTime utcNow = DateTime.UtcNow;
+            long unixTimestamp = ((DateTimeOffset)utcNow).ToUnixTimeSeconds();
+            return string.Format("<t:{0}:f> (<t:{0}:R>)", unixTimestamp);
+        }
+        catch
+        {
+            return $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]";
+        }
+    }
+    
+    public string WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()
+    {
+        return $"[{DateTime.Now:HH:mm:ss}]";
+    }
+
+    public string TwitchAvatarURL(string user)
+    {
+        try
+        {
+            return CPH.TwitchGetExtendedUserInfoByLogin(user).ProfileImageUrl;
+        }
+        catch
+        {
+            return twitchAvatarURL;
+        }
+    }
+}
