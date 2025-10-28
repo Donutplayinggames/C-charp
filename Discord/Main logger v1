@@ -1,0 +1,317 @@
+using System;
+using System.IO;
+using Newtonsoft.Json.Linq;
+
+///////////////////////////
+/// CPH.TryGetArg("unknownVariable", out object value);
+/// writer.WriteLine($"Value: {value}, Type: {value?.GetType().Name}");
+///////////////////////////
+// ✅ Update text here
+
+
+public class CPHInline
+{
+    string basePath = AppDomain.CurrentDomain.BaseDirectory;
+
+    public bool Execute()
+    {
+        CPH.TryGetArg("__source", out string source);
+
+        // optional: ignore TwitchChatMessage with bits (already log cheers separately)
+        if (source == "TwitchChatMessage")
+        {
+            CPH.TryGetArg("bits", out int bits);
+            if (bits > 0)
+            {
+                CPH.LogInfo("Ignoring cheer message - handled by cheer event");
+                return true;  
+            }
+        }
+
+        string today = DateTime.Now.ToString("yyyy-MM-dd");
+        string folderPath = $"{basePath}Donuts logs";
+        string filePath = $"{folderPath}\\{today}.cum";
+        Directory.CreateDirectory(folderPath);
+
+        using (StreamWriter writer = File.AppendText(filePath))
+        {
+            switch (source)
+            {
+                // ------------------------------
+                // Twitch AdRun
+                // ------------------------------
+                case "TwitchAdRun":
+                    {
+					CPH.TryGetArg("adLength", out string adLength);
+					CPH.TryGetArg("adLengthMs", out int adLengthMs);
+					CPH.TryGetArg("adScheduled", out bool adScheduled);
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch AdRun • {adLength} ({adLengthMs} ms) • Scheduled: {adScheduled}");
+                    }
+                    break;
+
+                // ------------------------------
+                // Twitch UpcomingAd
+                // ------------------------------
+                case "TwitchUpcomingAd":
+                    {
+                    CPH.TryGetArg("adLength", out int adLength);
+                    CPH.TryGetArg("minutes", out int minutes);
+                    CPH.TryGetArg("snoozesLeft", out int snoozesLeft);
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Upcoming Ad • {minutes} min • {adLength}s length • {snoozesLeft} snoozes left");
+                    }
+                    break;
+
+                // ------------------------------
+                // Twitch Announcement
+                // ------------------------------
+                case "TwitchAnnouncement":
+                    {
+                    CPH.TryGetArg("announceColor", out int adLength);
+                    CPH.TryGetArg("minutes", out int minutes);
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Announcement • {minutes}");
+                    }
+                    break;          
+
+                // ------------------------------
+                // Twitch Automatic Reward Redemption
+                // ------------------------------
+                case "TwitchAutomaticRewardRedemption":
+                    {
+					CPH.TryGetArg("rewardType", out string rewardType);
+					CPH.TryGetArg("rewardCost", out int rewardCost);
+					CPH.TryGetArg("user", out string user);
+					CPH.TryGetArg("userInput", out string userInput);
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Automatic Reward • {user} redeemed {rewardType} ({rewardCost} points) → {userInput}");
+                    }
+                    break;  
+
+                // ------------------------------
+                // Twitch AutoMod Message Held
+                // ------------------------------
+                case "TwitchAutoModMessageHeld":
+                    {
+					CPH.TryGetArg("category", out string category);
+                    CPH.TryGetArg("heldAt", out DateTime heldAt);
+                    CPH.TryGetArg("rawInput", out string rawInput);
+					CPH.TryGetArg("user", out string user);
+					CPH.TryGetArg("userInput", out string userInput);
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | AutoMod held message from {user}: \"{userInput}\"");
+                        writer.WriteLine($"             Category: {category}, HeldAt: {heldAt}, Raw: {userInput}");
+                    }
+                    break;
+
+                // ------------------------------
+                // Twitch AutoMod Message Update
+                // ------------------------------
+                case "TwitchAutoModMessageUpdate":
+                    {
+					CPH.TryGetArg("category", out string category);
+                    CPH.TryGetArg("heldAt", out DateTime heldAt);
+                    CPH.TryGetArg("rawInput", out string rawInput);
+					CPH.TryGetArg("user", out string user);
+                    CPH.TryGetArg("level", out int level);
+					CPH.TryGetArg("userInput", out string userInput);
+                    CPH.TryGetArg("status", out string status);
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | AutoMod Update • {user} • Status: {status} • Level: {level} • Category: {category} • \"{userInput}\"");
+                        writer.WriteLine($"             Category: {category}, HeldAt: {heldAt}, status: {status}");
+                    }
+                    break;                    
+
+                // ------------------------------
+                // Twitch BetterTTV Emote Added
+                // ------------------------------
+                case "TwitchBetterTTVEmoteAdded":
+                    {
+					CPH.TryGetArg("emote", out string emote);
+                    CPH.TryGetArg("imageUrl", out string imageUrl);
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | BetterTTV Emote Added • {emote}");
+                        writer.WriteLine($"             ImageURL: {imageUrl}");
+                    }
+                    break;
+
+                // ------------------------------
+                // Twitch BetterTTV Emote Removed
+                // ------------------------------
+                case "TwitchBetterTTVEmoteRemoved":
+                    {
+					CPH.TryGetArg("emote", out string emote);
+                    CPH.TryGetArg("imageUrl", out string imageUrl);
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch BetterTTV Emote Removed • {emote}");
+                        writer.WriteLine($"             ImageURL: {imageUrl}");
+                    }
+                    break;  
+
+                // ------------------------------
+                // Bits BadgeTier
+                // ------------------------------
+                case "TwitchBitsBadgeTier":
+                    {
+                    CPH.TryGetArg("user", out string badgeTierUser);
+                    CPH.TryGetArg("tier", out string tier);
+                    CPH.TryGetArg("emote", out string emote);
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Bits Badge Tier • User: {badgeTierUser}, Tier: {tier}, Emote: {emote}");
+                    }
+                    break;
+
+                // ------------------------------
+                // Twitch Blocked Terms Added
+                // ------------------------------
+                case "TwitchBlockedTermsAdded":
+                    {
+                    CPH.TryGetArg("moderatorDisplayName", out string moderatorDisplayName);
+                    CPH.TryGetArg("term.[#]", out string term);                            
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | Blocked Terms Added • Moderator: {moderatorDisplayName} • Term: {term}");
+                    }
+                    break;                
+
+                // ------------------------------
+                // Twitch Blocked Terms Added
+                // ------------------------------
+                case "TwitchBlockedTermsDeleted":
+                    {
+                    CPH.TryGetArg("moderatorDisplayName", out string moderatorDisplayName);
+                    CPH.TryGetArg("term.[#]", out string term);                            
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | Blocked Terms Deleted • Moderator: {moderatorDisplayName} • Term: {term}");
+                    }
+                    break; 
+
+                // ------------------------------
+                // Twitch Bot connected
+                // ------------------------------
+                case "TwitchBotEventSubConnected":
+                    {
+                    CPH.TryGetArg("triggerName", out string BotConnected);                         
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | bot connected • Bot: {BotConnected}");
+                    }
+                    break;   
+
+                // ------------------------------
+                // Twitch Bot Whisper
+                // ------------------------------
+                case "TwitchBotWhisper":
+                {
+                CPH.TryGetArg("rawInput", out string rawInput);
+                CPH.TryGetArg("user", out string user);                        
+                    writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | bot whisper • {user}: {rawInput}");
+                }
+                    break;
+
+
+
+                // ------------------------------
+                // Twitch Bot connected
+                // ------------------------------
+                case "TwitchBotEventSubDisconnected":
+                    {
+                    CPH.TryGetArg("triggerName", out string BotConnected);                         
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | bot disconnected • Bot: {BotConnected}");
+                    }
+                    break;                                         
+
+
+                // ------------------------------
+                // Example: Twitch Cheer
+                // ------------------------------
+                case "TwitchCheer":
+                    {
+                        CPH.TryGetArg("user", out string user);
+                        CPH.TryGetArg("bits", out int bits);
+                        CPH.TryGetArg("message", out string message);
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Cheer • {user}: ({bits} bits) {message}");
+                    }
+                    break;
+
+                // ------------------------------
+                // Example: Twitch Follow
+                // ------------------------------
+                case "TwitchFollow":
+                    {
+                        CPH.TryGetArg("user", out string followUser);
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | New follow from {followUser}");
+                    }
+                    break;
+
+                // ------------------------------
+                // Example: Twitch Sub
+                // ------------------------------
+                case "TwitchSub":
+                    {
+                        CPH.TryGetArg("user", out string subUser);
+                        CPH.TryGetArg("tier", out string subTier);
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | Subscription • {subUser} ({subTier})");
+                    }
+                    break;
+
+                // ------------------------------
+                // Example: Twitch Raid
+                // ------------------------------
+                case "TwitchRaid":
+                    {
+                        CPH.TryGetArg("user", out string raidUser);
+                        CPH.TryGetArg("viewers", out int viewers);
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | Raid from {raidUser} with {viewers} viewers");
+                    }
+                    break;
+
+                // ------------------------------
+                // Example: Twitch Stream Offline
+                // ------------------------------
+                case "TwitchStreamOffline":
+                    {
+                        CPH.TryGetArg("endedAt", out DateTime endedAt);
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | Stream ended at {endedAt}");
+                    }
+                    break;
+
+                // ------------------------------
+                // Example: Twitch Stream Online
+                // ------------------------------
+                case "TwitchStreamOnline":
+                    {
+                        CPH.TryGetArg("startedAt", out DateTime startedAt);
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | Stream started at {startedAt}");
+                    }
+                    break;
+
+                // ------------------------------
+                // Example: Twitch Chat Message
+                // ------------------------------
+                case "TwitchChatMessage":
+                    {
+                        CPH.TryGetArg("user", out string user);
+                        CPH.TryGetArg("message", out string message);
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | {user}: {message}");
+                    }
+                    break;
+
+                // ------------------------------
+                // Example: Twitch Reward Redemption
+                // ------------------------------
+                case "TwitchRewardRedemption":
+                    {
+                        CPH.TryGetArg("user", out string rewardUser);
+                        CPH.TryGetArg("rewardName", out string rewardName);
+                        CPH.TryGetArg("rewardCost", out int rewardCost);
+                        CPH.TryGetArg("rawInput", out string rewardInput);
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | Channel Point • {rewardUser} redeemed {rewardName} ({rewardCost}) → {rewardInput}");
+                    }
+                    break;
+
+                // ------------------------------
+                // Default catch for unhandled Twitch events
+                // ------------------------------
+                default:
+                    writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | Unhandled event: {source}");
+                    break;
+            }
+        }
+        
+        return true;  // ✅ Added this line
+    }
+
+    // 🔸 Helper method for timestamps
+    public string WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()
+    {
+        return $"[{DateTime.Now:HH:mm:ss}]";
+    }
+}
