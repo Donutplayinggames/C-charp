@@ -2,13 +2,6 @@ using System;
 using System.IO;
 using Newtonsoft.Json.Linq;
 
-///////////////////////////
-/// CPH.TryGetArg("unknownVariable", out object value);
-/// writer.WriteLine($"Value: {value}, Type: {value?.GetType().Name}");
-///////////////////////////
-// ✅ Update text here
-
-
 public class CPHInline
 {
     string basePath = AppDomain.CurrentDomain.BaseDirectory;
