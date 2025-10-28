@@ -350,18 +350,26 @@ public class CPHInline
 
 			case "TwitchCommunityGoalEnded":
 				{
+				CPH.TryGetArg("contributed", out int CommunityGoalEndedContribution);
+				CPH.TryGetArg("goalAmount", out string CommunityGoalEndedGoalAmount);
+				CPH.TryGetArg("percentComplete", out string CommunityGoalEndedpercentComplete);
+				CPH.TryGetArg("title", out string CommunityGoalEndedTitle);
+				TwitchCommunityGoalEnded(CommunityGoalEndedContribution, CommunityGoalEndedGoalAmount, CommunityGoalEndedpercentComplete, CommunityGoalEndedTitle); 
 				}
 				break;
 
 			case "TwitchFirstWord":
 				{
+				CPH/TryGetArg("user", out string FirstWordUser),
+				CPH.TryGetArg("message", out string FirstwordMessage),
+				TwitchFirstWord(FirstWordUser, FirstwordMessage)
 				}
 				break;														
 
 			case "TwitchFollow":
 				{
 					CPH.TryGetArg("user", out string followUser);
-					TwitchFollow(followUser).GetAwaiter().GetResult();
+					TwitchFollow(followUser)
 				}
 				break;
 
@@ -370,7 +378,7 @@ public class CPHInline
 					CPH.TryGetArg("user", out string giftBombUser);
 					CPH.TryGetArg("gifts", out int gifts);
 					CPH.TryGetArg("tier", out string giftBombTier);
-					TwitchGiftBomb(giftBombUser, gifts, giftBombTier).GetAwaiter().GetResult();
+					TwitchGiftBomb(giftBombUser, gifts, giftBombTier);
 				}
 				break;
 
@@ -385,17 +393,17 @@ public class CPHInline
 					CPH.TryGetArg("user", out string giftSubUser);
 					CPH.TryGetArg("recipientUser", out string recipientUser);
 					CPH.TryGetArg("tier", out string giftSubTier);
-					TwitchGiftSub(giftSubUser, recipientUser, giftSubTier).GetAwaiter().GetResult();
+					TwitchGiftSub(giftSubUser, recipientUser, giftSubTier);
 				}
 				break;
 
 			case "TwitchGoalBegin":
 				{
-					CPH.TryGetArg("goalcurrentAmount", out int goalcurrentAmount);
-					CPH.TryGetArg("goaldesscription", out string goaldescription);
-					CPH.TryGetArg("goaltargetAmount", out string goaltargetAmount);
-					CPH.TryGetArg("goaltype", out string goaltype);
-					TwitchGoalBegin(goaldescription, goaltargetAmount, goaltype).GetAwaiter().GetResult();
+					CPH.TryGetArg("goalcurrentAmount", out int TwitchGoalBegincurrentAmount);
+					CPH.TryGetArg("goaldesscription", out string TwitchGoalBegindescription);
+					CPH.TryGetArg("goaltargetAmount", out string TwitchGoalBegintargetAmount);
+					CPH.TryGetArg("goaltype", out string TwitchGoalBegingoaltype);
+					TwitchGoalBegin(TwitchGoalBegindescription, TwitchGoalBegintargetAmount, TwitchGoalBegingoaltype);
 				}
 				break;
 
