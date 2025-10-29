@@ -88,7 +88,7 @@ public class CPHInline
                     CPH.TryGetArg("rawInput", out string rawInput);
 					CPH.TryGetArg("user", out string user);
 					CPH.TryGetArg("userInput", out string userInput);
-                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | AutoMod held message from {user}: \"{userInput}\"");
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch AutoMod held message from {user}: \"{userInput}\"");
                         writer.WriteLine($"             Category: {category}, HeldAt: {heldAt}, Raw: {userInput}");
                     }
                     break;
@@ -105,7 +105,7 @@ public class CPHInline
                     CPH.TryGetArg("level", out int level);
 					CPH.TryGetArg("userInput", out string userInput);
                     CPH.TryGetArg("status", out string status);
-                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | AutoMod Update • {user} • Status: {status} • Level: {level} • Category: {category} • \"{userInput}\"");
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch AutoMod Update • {user} • Status: {status} • Level: {level} • Category: {category} • \"{userInput}\"");
                         writer.WriteLine($"             Category: {category}, HeldAt: {heldAt}, status: {status}");
                     }
                     break;                    
@@ -117,7 +117,7 @@ public class CPHInline
                     {
 					CPH.TryGetArg("emote", out string emote);
                     CPH.TryGetArg("imageUrl", out string imageUrl);
-                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | BetterTTV Emote Added • {emote}");
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch BetterTTV Emote Added • {emote}");
                         writer.WriteLine($"             ImageURL: {imageUrl}");
                     }
                     break;
@@ -153,7 +153,7 @@ public class CPHInline
                     {
                     CPH.TryGetArg("moderatorDisplayName", out string moderatorDisplayName);
                     CPH.TryGetArg("term.[#]", out string term);                            
-                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | Blocked Terms Added • Moderator: {moderatorDisplayName} • Term: {term}");
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Blocked Terms Added • Moderator: {moderatorDisplayName} • Term: {term}");
                     }
                     break;                
 
@@ -164,7 +164,7 @@ public class CPHInline
                     {
                     CPH.TryGetArg("moderatorDisplayName", out string moderatorDisplayName);
                     CPH.TryGetArg("term.[#]", out string term);                            
-                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | Blocked Terms Deleted • Moderator: {moderatorDisplayName} • Term: {term}");
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Blocked Terms Deleted • Moderator: {moderatorDisplayName} • Term: {term}");
                     }
                     break; 
 
@@ -174,9 +174,20 @@ public class CPHInline
                 case "TwitchBotEventSubConnected":
                     {
                     CPH.TryGetArg("triggerName", out string BotConnected);                         
-                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | bot connected • Bot: {BotConnected}");
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch bot connected • Bot: {BotConnected}");
                     }
                     break;   
+
+                // ------------------------------
+                // Twitch Bot Disconnected
+                // ------------------------------
+                case "TwitchBotEventSubDisconnected":
+                    {
+                    CPH.TryGetArg("triggerName", out string BotConnected);                         
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch bot Disconnected • Bot: {BotConnected}");
+                    }
+                    break;   
+
 
                 // ------------------------------
                 // Twitch Bot Whisper
@@ -185,21 +196,160 @@ public class CPHInline
                 {
                 CPH.TryGetArg("rawInput", out string rawInput);
                 CPH.TryGetArg("user", out string user);                        
-                    writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | bot whisper • {user}: {rawInput}");
+                    writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch bot whisper • {user}: {rawInput}");
                 }
                     break;
 
-
+                // ------------------------------
+                // Twitch Charity Completed
+                // ------------------------------
+                case "TwitchCharityCompleted":
+                {
+                CPH.TryGetArg("charity.name", out string charityName);
+                CPH.TryGetArg("charity.description", out string charityDescription);
+                CPH.TryGetArg("charity.website", out string charityWebsite);
+                CPH.TryGetArg("charity.currentAmount.value", out double charityCurrentAmountValue); 
+                CPH.TryGetArg("charity.currentAmount.currency", out string charityCurrentAmountCurrency);
+                CPH.TryGetArg("charity.targetAmount.value", out double charityTargetAmountValue);
+                CPH.TryGetArg("charity.targetAmount.currency", out string charityTargetAmountCurrency);                    
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Charity Completed • {charityName}");
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Charity Raised • {charityCurrentAmountCurrency} {charityCurrentAmountValue}");
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Charity Target • {charityTargetAmountCurrency} {charityTargetAmountValue}");
+                }
+                    break;
 
                 // ------------------------------
-                // Twitch Bot connected
+                // Twitch Charity Donation
                 // ------------------------------
-                case "TwitchBotEventSubDisconnected":
-                    {
-                    CPH.TryGetArg("triggerName", out string BotConnected);                         
-                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | bot disconnected • Bot: {BotConnected}");
-                    }
+                case "TwitchCharityDonation":
+                {
+                CPH.TryGetArg("charity.name", out string charityName);
+                CPH.TryGetArg("charity.description", out string charityDescription);
+                CPH.TryGetArg("charity.website", out string charityWebsite);
+                CPH.TryGetArg("charity.currentAmount.value", out double charityCurrentAmountValue); 
+                CPH.TryGetArg("charity.currentAmount.currency", out string charityCurrentAmountCurrency);
+                CPH.TryGetArg("charity.targetAmount.value", out double charityTargetAmountValue);
+                CPH.TryGetArg("charity.targetAmount.currency", out string charityTargetAmountCurrency);                    
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Charity Donation • {charityName}");
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Charity Raised • {charityCurrentAmountCurrency} {charityCurrentAmountValue}");
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Charity Target • {charityTargetAmountCurrency} {charityTargetAmountValue}");
+                }
+                    break;
+
+                // ------------------------------
+                // Twitch Charity Progress
+                // ------------------------------
+                case "TwitchCharityProgress":
+                {
+                CPH.TryGetArg("charity.name", out string charityName);
+                CPH.TryGetArg("charity.description", out string charityDescription);
+                CPH.TryGetArg("charity.website", out string charityWebsite);
+                CPH.TryGetArg("charity.currentAmount.value", out double charityCurrentAmountValue); 
+                CPH.TryGetArg("charity.currentAmount.currency", out string charityCurrentAmountCurrency);
+                CPH.TryGetArg("charity.targetAmount.value", out double charityTargetAmountValue);
+                CPH.TryGetArg("charity.targetAmount.currency", out string charityTargetAmountCurrency);                    
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Charity Progress • {charityName}");
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Charity Raised • {charityCurrentAmountCurrency} {charityCurrentAmountValue}");
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Charity Target • {charityTargetAmountCurrency} {charityTargetAmountValue}");
+                }
+                    break;    
+
+                // ------------------------------
+                // Twitch Charity Started
+                // ------------------------------
+                case "TwitchCharityStarted":
+                {
+                CPH.TryGetArg("charity.name", out string charityName);
+                CPH.TryGetArg("charity.description", out string charityDescription);
+                CPH.TryGetArg("charity.website", out string charityWebsite);
+                CPH.TryGetArg("charity.currentAmount.value", out double charityCurrentAmountValue); 
+                CPH.TryGetArg("charity.currentAmount.currency", out string charityCurrentAmountCurrency);
+                CPH.TryGetArg("charity.targetAmount.value", out double charityTargetAmountValue);
+                CPH.TryGetArg("charity.targetAmount.currency", out string charityTargetAmountCurrency);                    
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Charity Started • {charityName}");
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Charity Raised • {charityCurrentAmountCurrency} {charityCurrentAmountValue}");
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Charity Target • {charityTargetAmountCurrency} {charityTargetAmountValue}");
+                }
+                    break;    
+
+                // ------------------------------
+                // Twitch Chat Cleared
+                // ------------------------------
+                case "TwitchChatCleared":
+                {
+                CPH.TryGetArg("triggerName", out string ChatCleared);
+                CPH.TryGetArg("moderatorDisplayName", out string moderatorDisplayName);
+                CPH.TryGetArg("clearSuccess", out bool clearSuccess);                    
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Chat Cleared • {ChatCleared} By {moderatorDisplayName}");
+                }
                     break;                                         
+
+                // ------------------------------
+                // Twitch Chat Emote Mode Off
+                // ------------------------------
+                case "TwitchChatEmoteModeOff":
+                {
+				CPH.TryGetArg("emoteMode", out bool emoteMode);
+				CPH.TryGetArg("emoteOnly", out bool emoteOnly);               
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Emote Mode • {emoteMode}");
+                }
+                    break;       
+
+                // ------------------------------
+                // Twitch Chat Emote Mode On
+                // ------------------------------
+                case "TwitchChatEmoteModeOn":
+                {
+				CPH.TryGetArg("emoteMode", out bool emoteMode);
+				CPH.TryGetArg("emoteOnly", out bool emoteOnly);               
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Emote Mode • {emoteMode}");
+                }
+                    break;           
+
+                // ------------------------------
+                // Twitch Chat Follower Mode Changed
+                // ------------------------------
+                case "TwitchChatFollowerModeChanged":
+                {
+				CPH.TryGetArg("followerMode", out bool followerMode);
+				CPH.TryGetArg("followerModeDuration", out int followerModeDuration);            
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Followermode Changed• {emofollowerModeteMode} Duration {followerModeDuration}");
+                }
+                    break;    
+
+                // ------------------------------
+                // Twitch Chat Follower Mode Off
+                // ------------------------------
+                case "TwitchChatFollowerModeOff":
+                {
+				CPH.TryGetArg("followerMode", out bool followerMode);
+				CPH.TryGetArg("followerModeDuration", out int followerModeDuration);            
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Followermode Off• {emofollowerModeteMode} Duration {followerModeDuration}");
+                }
+                    break;                                                          
+
+                // ------------------------------
+                // Twitch Chat Follower Mode On
+                // ------------------------------
+                case "TwitchChatFollowerModeOn":
+                {
+				CPH.TryGetArg("followerMode", out bool followerMode);
+				CPH.TryGetArg("followerModeDuration", out int followerModeDuration);            
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Followermode On• {emofollowerModeteMode} Duration {followerModeDuration}");
+                }
+                    break;  
+
+                // ------------------------------
+                // Twitch Chat Message Deleted
+                // ------------------------------
+                case "TwitchChatMessageDeleted":
+                {
+				CPH.TryGetArg("user", out string DeletedUser);
+				CPH.TryGetArg("message", out string DeletedMessage);           
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Chat message deleted• {DeletedUser} say: {DeletedMessage}");
+                }
+                    break;                      
+                                     
 
 
                 // ------------------------------
@@ -220,7 +370,7 @@ public class CPHInline
                 case "TwitchFollow":
                     {
                         CPH.TryGetArg("user", out string followUser);
-                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | New follow from {followUser}");
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch New follow from {followUser}");
                     }
                     break;
 
@@ -231,7 +381,7 @@ public class CPHInline
                     {
                         CPH.TryGetArg("user", out string subUser);
                         CPH.TryGetArg("tier", out string subTier);
-                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | Subscription • {subUser} ({subTier})");
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Subscription • {subUser} ({subTier})");
                     }
                     break;
 
