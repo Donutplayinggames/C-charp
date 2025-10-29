@@ -313,7 +313,7 @@ public class CPHInline
                 {
 				CPH.TryGetArg("followerMode", out bool followerMode);
 				CPH.TryGetArg("followerModeDuration", out int followerModeDuration);            
-                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Followermode Changed• {emofollowerModeteMode} Duration {followerModeDuration}");
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Followermode Changed • {followerMode} Duration {followerModeDuration}");
                 }
                     break;    
 
@@ -324,7 +324,7 @@ public class CPHInline
                 {
 				CPH.TryGetArg("followerMode", out bool followerMode);
 				CPH.TryGetArg("followerModeDuration", out int followerModeDuration);            
-                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Followermode Off• {emofollowerModeteMode} Duration {followerModeDuration}");
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Followermode Off • {followerMode} Duration {followerModeDuration}");
                 }
                     break;                                                          
 
@@ -335,7 +335,7 @@ public class CPHInline
                 {
 				CPH.TryGetArg("followerMode", out bool followerMode);
 				CPH.TryGetArg("followerModeDuration", out int followerModeDuration);            
-                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Followermode On• {emofollowerModeteMode} Duration {followerModeDuration}");
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Followermode On • {followerMode} Duration {followerModeDuration}");
                 }
                     break;  
 
@@ -346,11 +346,68 @@ public class CPHInline
                 {
 				CPH.TryGetArg("user", out string DeletedUser);
 				CPH.TryGetArg("message", out string DeletedMessage);           
-                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Chat message deleted• {DeletedUser} say: {DeletedMessage}");
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Chat message deleted • {DeletedUser} say: {DeletedMessage}");
                 }
                     break;                      
                                      
+                // ------------------------------
+                // Twitch Chat Slow Mode Changed
+                // ------------------------------
+                case "TwitchChatSlowModeChanged":
+                {
+				CPH.TryGetArg("slowMode", out bool slowMode);
+				CPH.TryGetArg("slowModeWaitTime", out int slowModeWaitTime);     
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Slow Mode Changed • Duration {slowModeWaitTime}: {slowMode}");
+                }
+                    break;      
 
+                // ------------------------------
+                // Twitch Chat Slow Mode Off
+                // ------------------------------
+                case "TwitchChatSlowModeOff":
+                {
+				CPH.TryGetArg("slowMode", out bool slowMode);
+				CPH.TryGetArg("slowModeWaitTime", out int slowModeWaitTime);       
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Slow Mode Off • {slowMode}");
+                }
+                    break;       
+
+			case "TwitchChatSlowModeOn":
+				{
+				CPH.TryGetArg("slowMode", out bool slowMode);
+				CPH.TryGetArg("slowModeWaitTime", out int slowModeWaitTime);    
+				writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Slow Mode On • Duration {slowModeWaitTime}: {slowMode}");
+				}
+				break;
+
+			case "TwitchChatSubscriberModeOff":
+				{
+				CPH.TryGetArg("subscriberOnly", out bool subscriberOnly);
+				writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Subscriber mode Off • {subscriberOnly}");					
+				}
+				break;
+
+			case "TwitchChatSubscriberModeOn":
+				{
+				CPH.TryGetArg("subscriberOnly", out bool subscriberOnly);
+				writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Subscriber mode On • {subscriberOnly}");				
+				}
+				break;
+
+			case "TwitchChatUniqueModeOff":
+				{
+				CPH.TryGetArg("uniqueMode", out bool uniqueMode);
+				writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch uniqueMode Off • {uniqueMode}");				
+				}
+				break;					
+
+
+			case "TwitchChatUniqueModeOn":
+				{
+				CPH.TryGetArg("uniqueMode", out bool uniqueMode);
+				writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch uniqueMode On • {uniqueMode}");				
+				}
+				break;				                                    
 
                 // ------------------------------
                 // Example: Twitch Cheer
@@ -363,6 +420,22 @@ public class CPHInline
                         writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch Cheer • {user}: ({bits} bits) {message}");
                     }
                     break;
+
+                case "TwitchCoinCheer":
+                {
+                        writer.WriteLine($"{WhenTheThingHappenedButOnlyTheTimeComponentNotTheDate()}  Twitch | Coin Cheer:");
+        
+                string[] possibleArgs = { "user", "amount", "coins", "message", "rawInput", "bits", "contributed", "title", "goalAmount" };
+                foreach (string arg in possibleArgs)
+                    {
+                    if (CPH.TryGetArg(arg, out object value))
+                {
+                    writer.WriteLine($"    {arg}: {value}");
+                }
+                    }
+                }
+                    break;
+
 
                 // ------------------------------
                 // Example: Twitch Follow
@@ -449,7 +522,7 @@ public class CPHInline
             }
         }
         
-        return true;  // ✅ Added this line
+        return true;
     }
 
     // 🔸 Helper method for timestamps
