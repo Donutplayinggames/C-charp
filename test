@@ -13,6 +13,23 @@ public class CPHInline
     int refreshSeconds = 15;
     int liveDisplayEvents = 200;
 
+    // Add the shortening method here
+    private string ShortenEventSource(string source)
+    {
+        if (string.IsNullOrEmpty(source)) return source;
+        
+        // Find the first lowercase→uppercase transition
+        for (int i = 1; i < source.Length; i++)
+        {
+            if (char.IsLower(source[i - 1]) && char.IsUpper(source[i]))
+            {
+                return source.Substring(0, i);
+            }
+        }
+        
+        return source; // No transition found, return original
+    }
+
     public bool Execute()
     {
         CPH.TryGetArg("__source", out EventType trigger);
@@ -168,20 +185,20 @@ public class CPHInline
 
             // ==================== Command ========================
             case EventType.CommandCooldown:
-                CPH.TryGetArg("triggerCategory", out string CommandCoolDownTriggerCategory);
+                CPH.TryGetArg("triggerCategory", out string CommandCoolDownTriggerCategory);                                                        /* The category of the trigger which executed the action */
                 CPH.TryGetArg("command", out string CommandCoolDownCommand);
                 CPH.TryGetArg("commandSource", out string CommandCoolDownCommandSource);
                 CPH.TryGetArg("commandType", out string CommandCoolDownCommandType);
                 CPH.TryGetArg("msgId", out string CommandCoolDownMsgId);
                 CPH.TryGetArg("isTest", out bool CommandCoolDownIsTest);
                 CPH.TryGetArg("commandId", out Guid CommandCoolDownCommandId);
-                CPH.TryGetArg("runningActionId", out Guid CommandCoolDownRunningActionId);
-                CPH.TryGetArg("actionQueuedAt", out DateTime CommandCoolDownActionQueuedAt);
-                CPH.TryGetArg("triggerId", out Guid CommandCoolDownTriggerId);
-                CPH.TryGetArg("triggerName", out string CommandCoolDownTriggerName);
-                CPH.TryGetArg("actionId", out Guid CommandCoolDownActionId);
-                CPH.TryGetArg("actionName", out Guid CommandCoolDownActionName);
-                CPH.TryGetArg("eventSource", out Guid CommandCoolDownEventSource);
+                CPH.TryGetArg("runningActionId", out Guid CommandCoolDownRunningActionId);                                                          /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime CommandCoolDownActionQueuedAt);                                                        /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid CommandCoolDownTriggerId);                                                                      /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string CommandCoolDownTriggerName);                                                                /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out Guid CommandCoolDownActionId);                                                                        /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out Guid CommandCoolDownActionName);                                                                    /* The name of the action being executed */
+                CPH.TryGetArg("eventSource", out Guid CommandCoolDownEventSource);                                                                  /* The service of the event which triggered the action.*/
                 CPH.TryGetArg("cooldownLeft", out int CommandCooldowncooldownLeft);
                 CPH.TryGetArg("globalCooldownLeft", out int CommandCooldownGlobalCoolDownLeft);
                 CPH.TryGetArg("user", out object CommandCooldownuser);
@@ -206,7 +223,7 @@ public class CPHInline
                 CPH.TryGetArg("user", out string CommandTriggereduser);
                 CPH.TryGetArg("userName", out string CommandTriggeredUserName);
                 CPH.TryGetArg("userId", out string CommandTriggeredUserID);
-                CPH.TryGetArg("triggerCategory", out string CommandTriggeredTriggerCategory);
+                CPH.TryGetArg("triggerCategory", out string CommandTriggeredTriggerCategory);                                                       /* The category of the trigger which executed the action */
                 CPH.TryGetArg("rawInput", out string CommandTriggeredRawInput); 
                 CPH.TryGetArg("command", out string CommandTriggeredCommands);
                 CPH.TryGetArg("commandSource", out string CommandTriggeredCommandSource);
@@ -245,7 +262,7 @@ public class CPHInline
                 CPH.TryGetArg("isTest", out string CrowdControlEffectFailureIsTest);
                 CPH.TryGetArg("TriggerName", out string CrowdControlEffectFailureTriggerName);
                 CPH.TryGetArg("eventsource", out string CrowdControlEffectFailureEventSource);
-                CPH.TryGetArg("triggerCategory", out string CrowdControlEffectFailureTriggerCategoty);
+                CPH.TryGetArg("triggerCategory", out string CrowdControlEffectFailureTriggerCategoty);                                              /* The category of the trigger which executed the action */
                 CPH.TryGetArg("effect.effectID", out string CrowdControlEffectFailureEffectID);
                 CPH.TryGetArg("effect.name", out string CrowdControlEffectFailureEffectName);
                 CPH.TryGetArg("effect.price", out int CrowdControlEffectFailureEffectPrice); /*price*/
@@ -262,7 +279,7 @@ public class CPHInline
                 CPH.TryGetArg("isTest", out string CrowdControlEffectRequestIsTest);
                 CPH.TryGetArg("TriggerName", out string CrowdControlEffectRequestTriggername);
                 CPH.TryGetArg("eventsource", out string CrowdControlEffectRequestEventsource);
-                CPH.TryGetArg("triggerCategory", out string CrowdControlEffectRequestTriggerCategoty);
+                CPH.TryGetArg("triggerCategory", out string CrowdControlEffectRequestTriggerCategoty);                                              /* The category of the trigger which executed the action */
                 CPH.TryGetArg("effect.effectID", out string CrowdControlEffectRequestEffectID);
                 CPH.TryGetArg("effect.name", out string CrowdControlEffectRequestEffectName);
                 CPH.TryGetArg("effect.price", out int CrowdControlEffectRequestEffectPrice); /*price*/
@@ -277,7 +294,7 @@ public class CPHInline
                CPH.TryGetArg("isTest", out string CrowdControlEffectSuccessIsTest);
                 CPH.TryGetArg("TriggerName", out string CrowdControlEffectSuccessTriggername);
                 CPH.TryGetArg("eventsource", out string CrowdControlEffectSuccessEventsource);
-                CPH.TryGetArg("triggerCategory", out string CrowdControlEffectSuccessTriggerCategoty);
+                CPH.TryGetArg("triggerCategory", out string CrowdControlEffectSuccessTriggerCategoty);                                              /* The category of the trigger which executed the action */
                 CPH.TryGetArg("effect.effectID", out string CrowdControlEffectSuccessEffectID);
                 CPH.TryGetArg("effect.name", out string CrowdControlEffectSuccessEffectName);
                 CPH.TryGetArg("effect.price", out int CrowdControlEffectSuccessEffectPrice); /*price*/
@@ -291,8 +308,8 @@ public class CPHInline
 
             case EventType.CrowdControlGameSessionEnd:
                 CPH.TryGetArg("isTest", out string CrowdControlGameSessionEndIsTest);
-                CPH.TryGetArg("triggerCategory", out string CrowdControlGameSessionEndtriggerCategory);
-                CPH.TryGetArg("triggerName", out string CrowdControlGameSessionEndTriggername);
+                CPH.TryGetArg("triggerCategory", out string CrowdControlGameSessionEndtriggerCategory);                                             /* The category of the trigger which executed the action */
+                CPH.TryGetArg("triggerName", out string CrowdControlGameSessionEndTriggername);                                                     /* The name of the trigger which executed the action */
                 CPH.TryGetArg("eventsource", out string CrowdControlGameSessionEndEventsource);
                 return $"CrowdControl <strong>{CrowdControlGameSessionEndTriggername}</strong>";
 
@@ -331,17 +348,17 @@ public class CPHInline
             // ==================== Elgato Camera Hub ========================
             case EventType.ElgatoCameraHubConnected:
                 CPH.TryGetArg("isTest", out string ElgatoCameraHubConnectedisTest);
-                CPH.TryGetArg("triggerId", out string ElgatoCameraHubConnectedTriggerId);
-                CPH.TryGetArg("triggerName", out string ElgatoCameraHubConnectedTriggerName);
-                CPH.TryGetArg("triggerCategory", out string ElgatoCameraHubConnectedTriggerCategory);
-                CPH.TryGetArg("eventSource", out string ElgatoCameraHubConnectedEventSource);
+                CPH.TryGetArg("triggerId", out string ElgatoCameraHubConnectedTriggerId);                                                           /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string ElgatoCameraHubConnectedTriggerName);                                                       /* The name of the trigger which executed the action */
+                CPH.TryGetArg("triggerCategory", out string ElgatoCameraHubConnectedTriggerCategory);                                               /* The category of the trigger which executed the action */
+                CPH.TryGetArg("eventSource", out string ElgatoCameraHubConnectedEventSource);                                                       /* The service of the event which triggered the action.*/
                 return $"<strong>No description provided</strong>";
 
             case EventType.ElgatoCameraHubDisconnected:
                 CPH.TryGetArg("isTest", out string ElgatoCameraHubDisconnectedisTest);
-                CPH.TryGetArg("triggerName", out string ElgatoCameraHubDisconnectedtrigger);
-                CPH.TryGetArg("triggerCategory", out string ElgatoCameraHubDisconnectedCategory);
-                CPH.TryGetArg("eventSource", out string ElgatoCameraHubDisconnectedEventSource);
+                CPH.TryGetArg("triggerName", out string ElgatoCameraHubDisconnectedtrigger);                                                        /* The name of the trigger which executed the action */
+                CPH.TryGetArg("triggerCategory", out string ElgatoCameraHubDisconnectedCategory);                                                   /* The category of the trigger which executed the action */
+                CPH.TryGetArg("eventSource", out string ElgatoCameraHubDisconnectedEventSource);                                                    /* The service of the event which triggered the action.*/
                 return $"<strong>No description provided</strong>";
 
             case EventType.ElgatoCameraHubPrompterAutoScrollChapterDisabled:
@@ -561,17 +578,17 @@ public class CPHInline
 
             // ==================== File ========================
             case EventType.FileTailChanged:
-                CPH.TryGetArg("triggerCategory", out string FileTailChangedTriggerCategory); /*Core/File IO/File Tail*/
-                CPH.TryGetArg("isTest", out bool FileTailChangedIsTest);  /*False/True */
-                CPH.TryGetArg("runningActionId", out Guid FileTailChangedRunningActionId); /*6e9613b9-c96a-45b6-b8aa-f97b839d434f*/
-                CPH.TryGetArg("actionQueuedAt", out DateTime FileTailChangedActionQueuedAt); /*2025-11-22 15:21:43*/
-                CPH.TryGetArg("triggerId", out Guid FileTailChangedTriggerId); /*2a642871-bbf4-42e7-a270-33113b32732f*/
-                CPH.TryGetArg("triggerName", out string FileTailChangedTriggerName); /*Changed*/
-                CPH.TryGetArg("actionId", out Guid FileTailChangedActionId);  /*3eb818ae-30bf-4412-9cc6-f90133e3f453*/
-                CPH.TryGetArg("actionName", out string FileTailChangedActionName); /*Twitch logs*/
-                CPH.TryGetArg("eventSource", out string FileTailChangedEventSource); /*"filetail"*/
-                CPH.TryGetArg("fileName", out string FileTailChangedFileName); /*yeet.mp3*/
-                CPH.TryGetArg("line", out string FileTailChangedLine);  /*This is a test line*/
+                CPH.TryGetArg("triggerCategory", out string FileTailChangedTriggerCategory);                                                        /* The category of the trigger which executed the action */
+                CPH.TryGetArg("isTest", out bool FileTailChangedIsTest);                                                                            /*False/True */
+                CPH.TryGetArg("runningActionId", out Guid FileTailChangedRunningActionId);                                                          /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime FileTailChangedActionQueuedAt);                                                        /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid FileTailChangedTriggerId);                                                                      /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string FileTailChangedTriggerName);                                                                /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out Guid FileTailChangedActionId);                                                                        /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string FileTailChangedActionName);                                                                  /* The name of the action being executed */
+                CPH.TryGetArg("eventSource", out string FileTailChangedEventSource);                                                                /* The service of the event which triggered the action.*/
+                CPH.TryGetArg("fileName", out string FileTailChangedFileName);                                                                      /*yeet.mp3*/
+                CPH.TryGetArg("line", out string FileTailChangedLine);                                                                              /*This is a test line*/
                 CPH.TryGetArg("fullPath", out string FileTailChangedfullPath);
                 CPH.TryGetArg("oldFullPath", out string FileTailChangedoldFullPath);
                 CPH.TryGetArg("oldFileName", out string FileTailChangedoldFileName);
@@ -592,14 +609,14 @@ public class CPHInline
                 CPH.TryGetArg("fileName", out string FileWatcherChangedfileName);
                 CPH.TryGetArg("lines", out string [] FileWatcherChangedlines);
 				CPH.TryGetArg("fileSize", out int  FileWatcherChangedFileSize);
-				CPH.TryGetArg("triggerName", out string FileWatcherChangedTriggerName);  /*"Created*/
-				CPH.TryGetArg("isTest", out bool FileWatcherChangedIsTest); /*if test tigger is False our true */
-				CPH.TryGetArg("changeType", out string FileWatcherChangedChangeType); /*The type of change (Changed, Created, Deleted)*/
-				CPH.TryGetArg("triggerCategory", out string FileWatcherChangedCreated); /*Core/File/Folder Watcher*/
-				CPH.TryGetArg("actionId", out Guid FileWatcherChangedActionId);  /*3eb818ae-30bf-4412-9cc6-f90133e3f453*/
-				CPH.TryGetArg("fullPath", out string FileWatcherChangedFullPath); /*The Full path to the file*/
-				CPH.TryGetArg("watcherFilter", out string FileWatcherChangedWatcherFilter); /*settings.json*/
-                CPH.TryGetArg("watcherFolder", out string FileWatcherChangedWatcherFolder); /*F:\Streamersbot\data*/
+				CPH.TryGetArg("triggerName", out string FileWatcherChangedTriggerName);                                                             /* The name of the trigger which executed the action */
+				CPH.TryGetArg("isTest", out bool FileWatcherChangedIsTest);                                                                         /*if test tigger is False our true */
+				CPH.TryGetArg("changeType", out string FileWatcherChangedChangeType);                                                               /*The type of change (Changed, Created, Deleted)*/
+				CPH.TryGetArg("triggerCategory", out string FileWatcherChangedCreated);                                                             /* The category of the trigger which executed the action */
+				CPH.TryGetArg("actionId", out Guid FileWatcherChangedActionId);                                                                     /* The unique ID of the action being executed */
+				CPH.TryGetArg("fullPath", out string FileWatcherChangedFullPath);                                                                   /*The Full path to the file*/
+				CPH.TryGetArg("watcherFilter", out string FileWatcherChangedWatcherFilter);                                                         /*settings.json*/
+                CPH.TryGetArg("watcherFolder", out string FileWatcherChangedWatcherFolder);                                                         /*F:\Streamersbot\data*/
                 string firstLine = FileWatcherChangedlines.FirstOrDefault();
                 if (!string.IsNullOrEmpty(firstLine))
                 {
@@ -611,61 +628,61 @@ public class CPHInline
                 }
 
             case EventType.FileWatcherCreated:
-                CPH.TryGetArg("triggerCategory", out string FileWatcherCreated); /*Core/File/Folder Watcher*/
-                CPH.TryGetArg("isTest", out bool FileWatcherCreatedIsTest); /*if test tigger is False our true */
-                CPH.TryGetArg("runningActionId", out Guid FileWatcherCreatedRunningActionID); /*63e7dcb8-429f-4979-a5bf-32ab22b75069*/
-                CPH.TryGetArg("actionQueuedAt", out DateTime FileWatcherCreatedActionQueuedAt);  /*Current time in format YYYY-MM-dd , HH,MM,ss*/
-                CPH.TryGetArg("triggerId", out Guid FileWatcherCreatedTriggerID); /*bf1f6c57-4159-45bc-98c0-b8c96721e03e*/
-                CPH.TryGetArg("triggerName", out string FileWatcherCreatedTriggerName);  /*"Created*/
-                CPH.TryGetArg("actionId", out Guid FileWatcherCreatedActionId);  /*3eb818ae-30bf-4412-9cc6-f90133e3f453*/
-                CPH.TryGetArg("actionName", out string FileWatcherCreatedActionName); /*Twitch logs*/
-                CPH.TryGetArg("eventSource", out string FileWatcherCreatedEventSource); /*filewatcher*/
-                CPH.TryGetArg("fullPath", out string FileWatcherCreatedFullPath); /*The Full path to the file*/
-                CPH.TryGetArg("fileName", out string FileWatcherCreatedFileName);  /*The file name with extension*/
-                CPH.TryGetArg("changeType", out string FileWatcherCreatedChangeType); /*The type of change (Changed, Created, Deleted)*/
-                CPH.TryGetArg("watcherFilter", out string FileWatcherCreatedWatcherFilter); /*settings.json*/
-                CPH.TryGetArg("watcherFolder", out string FileWatcherCreatedWatcherFolder); /*F:\Streamersbot\data*/
-                CPH.TryGetArg("empty", out string FileWatcherCreatedEmpty); /*if the file is now empty*/
-                CPH.TryGetArg("lines", out string FileWatcherCreatedLines); /*the numer of lines in the file*/
-                CPH.TryGetArg("line", out int FileWatcherCreatedLine); /*the specific line of the file, 0 based index, 0 is the first line*/
-                CPH.TryGetArg("lineEscaped#", out string FileWatcherCreatedLineEscaped);/*the line escaped for use in a url Query*/
+                CPH.TryGetArg("triggerCategory", out string FileWatcherCreated);                                                                    /* The category of the trigger which executed the action */
+                CPH.TryGetArg("isTest", out bool FileWatcherCreatedIsTest);                                                                         /*if test tigger is False our true */
+                CPH.TryGetArg("runningActionId", out Guid FileWatcherCreatedRunningActionID);                                                       /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime FileWatcherCreatedActionQueuedAt);                                                     /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid FileWatcherCreatedTriggerID);                                                                   /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string FileWatcherCreatedTriggerName);                                                             /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out Guid FileWatcherCreatedActionId);                                                                     /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string FileWatcherCreatedActionName);                                                               /* The name of the action being executed */
+                CPH.TryGetArg("eventSource", out string FileWatcherCreatedEventSource);                                                             /* The service of the event which triggered the action.*/
+                CPH.TryGetArg("fullPath", out string FileWatcherCreatedFullPath);                                                                   /*The Full path to the file*/
+                CPH.TryGetArg("fileName", out string FileWatcherCreatedFileName);                                                                   /*The file name with extension*/
+                CPH.TryGetArg("changeType", out string FileWatcherCreatedChangeType);                                                               /*The type of change (Changed, Created, Deleted)*/
+                CPH.TryGetArg("watcherFilter", out string FileWatcherCreatedWatcherFilter);                                                         /*settings.json*/
+                CPH.TryGetArg("watcherFolder", out string FileWatcherCreatedWatcherFolder);                                                         /*F:\Streamersbot\data*/
+                CPH.TryGetArg("empty", out string FileWatcherCreatedEmpty);                                                                         /*if the file is now empty*/
+                CPH.TryGetArg("lines", out string FileWatcherCreatedLines);                                                                         /*the numer of lines in the file*/
+                CPH.TryGetArg("line", out int FileWatcherCreatedLine);                                                                              /*the specific line of the file, 0 based index, 0 is the first line*/
+                CPH.TryGetArg("lineEscaped#", out string FileWatcherCreatedLineEscaped);                                                            /*the line escaped for use in a url Query*/
                 CPH.TryGetArg("fileSize", out int FileWatcherCreatedFileSize);  
                 return $"<strong>No description provided</strong>";
 
             case EventType.FileWatcherDeleted:
-			    CPH.TryGetArg("triggerCategory", out string FileWatcherDeletedTrigggerCategory);  /*Core/File/Folder Watcher*/
-    			CPH.TryGetArg("isTest", out bool FileWatcherDeletedIsTest); /*Trigger test False/True*/
-    			CPH.TryGetArg("runningActionId", out Guid FileWatcherDeletedRunningActionId); /* 6da2f2e3-ced8-466e-9027-f5094938eb73*/
-    			CPH.TryGetArg("actionQueuedAt", out DateTime FileWatcherDeletedActionQueuedAt);  /*Current time in format YYYY-MM-dd , HH,MM,ss*/
-    			CPH.TryGetArg("triggerId", out Guid FileWatcherDeletedTriggerId); /* d496077d-cbfc-4879-a809-351d4ee6468c*/
-    			CPH.TryGetArg("triggerName", out string FileWatcherDeletedTriggerName); /*Deleted*/
-    			CPH.TryGetArg("actionId", out Guid FileWatcherDeletedActionId); /*3eb818ae-30bf-4412-9cc6-f90133e3f453*/
-    			CPH.TryGetArg("actionName", out string FileWatcherDeletedActionName); /*Twitch logs*/
-				CPH.TryGetArg("eventSource", out string FileWatcherDeletedEventSource); /*filewatcher*/
-                CPH.TryGetArg("fullPath", out string FileWatcherDeletedFullPath); /*The Full path to the file*/
-                CPH.TryGetArg("fileName", out string FileWatcherDeletedFileName);  /*The file name with extension*/
-    			CPH.TryGetArg("changeType", out string FileWatcherDeletedChangeType); /*The type of change (Changed, Created, Deleted)*/
-    			CPH.TryGetArg("watcherFilter", out string FileWatcherDeletedWatcherFilter); /*settings.json*/
-                CPH.TryGetArg("watcherFolder", out string FileWatcherDeletedWatcherFolder); /*F:\Streamersbot\data*/
+			    CPH.TryGetArg("triggerCategory", out string FileWatcherDeletedTrigggerCategory);                                                    /* The category of the trigger which executed the action */
+    			CPH.TryGetArg("isTest", out bool FileWatcherDeletedIsTest);                                                                         /*Trigger test False/True*/
+    			CPH.TryGetArg("runningActionId", out Guid FileWatcherDeletedRunningActionId);                                                       /* The unique ID of this running action instance within the queue */
+    			CPH.TryGetArg("actionQueuedAt", out DateTime FileWatcherDeletedActionQueuedAt);                                                     /* The timestamp of when action was queued */
+    			CPH.TryGetArg("triggerId", out Guid FileWatcherDeletedTriggerId);                                                                   /* The unique id of the trigger with executed the action */
+    			CPH.TryGetArg("triggerName", out string FileWatcherDeletedTriggerName);                                                             /* The name of the trigger which executed the action */
+    			CPH.TryGetArg("actionId", out Guid FileWatcherDeletedActionId);                                                                     /* The unique ID of the action being executed */
+    			CPH.TryGetArg("actionName", out string FileWatcherDeletedActionName);                                                               /* The name of the action being executed */
+				CPH.TryGetArg("eventSource", out string FileWatcherDeletedEventSource);                                                             /* The service of the event which triggered the action.*/
+                CPH.TryGetArg("fullPath", out string FileWatcherDeletedFullPath);                                                                   /*The Full path to the file*/
+                CPH.TryGetArg("fileName", out string FileWatcherDeletedFileName);                                                                   /*The file name with extension*/
+    			CPH.TryGetArg("changeType", out string FileWatcherDeletedChangeType);                                                               /*The type of change (Changed, Created, Deleted)*/
+    			CPH.TryGetArg("watcherFilter", out string FileWatcherDeletedWatcherFilter);                                                         /*settings.json*/
+                CPH.TryGetArg("watcherFolder", out string FileWatcherDeletedWatcherFolder);                                                         /*F:\Streamersbot\data*/
                 return $"<strong>No description provided</strong>";
 
             case EventType.FileWatcherRenamed:
-                CPH.TryGetArg("triggerCategory", out string FileWatcherRenamedTrigggerCategory);  /*Core/File/Folder Watcher*/
-                CPH.TryGetArg("isTest", out bool FileWatcherRenamedIsTest); /*Trigger test False/True*/
-                CPH.TryGetArg("runningActionId", out Guid FileWatcherRenamedRunningActionId); /* 6da2f2e3-ced8-466e-9027-f5094938eb73*/
-                CPH.TryGetArg("actionQueuedAt", out DateTime FileWatcherRenamedActionQueuedAt);  /*Current time in format YYYY-MM-dd , HH,MM,ss*/
-                CPH.TryGetArg("triggerId", out Guid FileWatcherRenamedTriggerId); /* d496077d-cbfc-4879-a809-351d4ee6468c*/
-                CPH.TryGetArg("triggerName", out string FileWatcherRenamedTriggerName); /*Renamed*/
-                CPH.TryGetArg("actionId", out Guid FileWatcherRenamedActionId); /*3eb818ae-30bf-4412-9cc6-f90133e3f453*/
-                CPH.TryGetArg("actionName", out string FileWatcherRenamedActionName); /*Twitch logs*/
-                CPH.TryGetArg("eventSource", out string FileWatcherRenamedEventSource); /*filewatcher*/
-                CPH.TryGetArg("changeType", out string FileWatcherRenamedChangeType); /*The type of change (Changed, Created, Deleted)*/
-                CPH.TryGetArg("fullPath", out string FileWatcherRenamedFullPath); /*Path where it is stored*/
-                CPH.TryGetArg("fileName", out string FileWatcherRenamedFileName); /*the file name*/
-                CPH.TryGetArg("oldFullPath", out string FileWatcherRenamedoldFullPath); /*Old path where the file is located*/
-                CPH.TryGetArg("oldFileName", out string FileWatcherRenamedoldFileName); /*old file name after rename it*/
-                CPH.TryGetArg("watcherFilter", out string FileWatcherRenamedWatcherFilter); /*settings.json*/
-                CPH.TryGetArg("watcherFolder", out string FileWatcherRenamedWatcherFolder); /*F:\Streamersbot\data*/
+                CPH.TryGetArg("triggerCategory", out string FileWatcherRenamedTrigggerCategory);                                                    /* The category of the trigger which executed the action */
+                CPH.TryGetArg("isTest", out bool FileWatcherRenamedIsTest);                                                                         /*Trigger test False/True*/
+                CPH.TryGetArg("runningActionId", out Guid FileWatcherRenamedRunningActionId);                                                       /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime FileWatcherRenamedActionQueuedAt);                                                     /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid FileWatcherRenamedTriggerId);                                                                   /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string FileWatcherRenamedTriggerName);                                                             /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out Guid FileWatcherRenamedActionId);                                                                     /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string FileWatcherRenamedActionName);                                                               /* The name of the action being executed */
+                CPH.TryGetArg("eventSource", out string FileWatcherRenamedEventSource);                                                             /* The service of the event which triggered the action.*/
+                CPH.TryGetArg("changeType", out string FileWatcherRenamedChangeType);                                                               /*The type of change (Changed, Created, Deleted)*/
+                CPH.TryGetArg("fullPath", out string FileWatcherRenamedFullPath);                                                                   /*Path where it is stored*/
+                CPH.TryGetArg("fileName", out string FileWatcherRenamedFileName);                                                                   /*the file name*/
+                CPH.TryGetArg("oldFullPath", out string FileWatcherRenamedoldFullPath);                                                             /*Old path where the file is located*/
+                CPH.TryGetArg("oldFileName", out string FileWatcherRenamedoldFileName);                                                             /*old file name after rename it*/
+                CPH.TryGetArg("watcherFilter", out string FileWatcherRenamedWatcherFilter);                                                         /*settings.json*/
+                CPH.TryGetArg("watcherFolder", out string FileWatcherRenamedWatcherFolder);                                                         /*F:\Streamersbot\data*/
                 return $"<strong>No description provided</strong>";
 
             // ==================== Fourthwall ========================
@@ -673,12 +690,12 @@ public class CPHInline
                 CPH.TryGetArg("donationId", out string FourthwallDonationID);
                 CPH.TryGetArg("createdAt", out DateTime FourthwallDonationCreatedAt);
                 CPH.TryGetArg("shopId", out string FourthwallDonationShopId);
-                CPH.TryGetArg("username", out string FourthwallDonationUsername);
+                CPH.TryGetArg("username", out string FourthwallDonationUsername);                                                                   /* supporter username */
                 CPH.TryGetArg("email", out string FourthwallDonationEmail);
-                CPH.TryGetArg("message", out string FourthwallDonationMessage);
-                CPH.TryGetArg("amount", out decimal FourthwallDonationAmount);
-                CPH.TryGetArg("currency", out string FourthwallDonationCurrency);
-                CPH.TryGetArg("status", out string FourthwallDonationStatus);
+                CPH.TryGetArg("message", out string FourthwallDonationMessage);                                                                     /* message from supporter */
+                CPH.TryGetArg("amount", out decimal FourthwallDonationAmount);                                                                      /* 41 */
+                CPH.TryGetArg("currency", out string FourthwallDonationCurrency);                                                                   /* USD/EUR */
+                CPH.TryGetArg("status", out string FourthwallDonationStatus);                                                                       /* COMPLETED */
                    
                 return $"{FourthwallDonationUsername} Donate <strong>{FourthwallDonationCurrency} {FourthwallDonationAmount}</strong> • Status: {FourthwallDonationStatus}"
                     + (string.IsNullOrEmpty(FourthwallDonationMessage) ? "" : $" • Message: {FourthwallDonationMessage}");
@@ -711,96 +728,96 @@ public class CPHInline
             // ==================== Global Variable ========================
 
             case EventType.GlobalVariableCreated:
-                CPH.TryGetArg("triggerCategory", out string GlobalVariableCreatedTriggerCategoty); /*Core/Global Variables*/
-                CPH.TryGetArg("isTest", out bool GlobalVariableCreatedIsTest); /*Is test trigger False/True*/
-                CPH.TryGetArg("runningActionId", out Guid GlobalVariableCreatedRunningActionId); /*d2c85714-9ab6-4ee4-b32a-e4b611fe6a3d*/
-                CPH.TryGetArg("actionQueuedAt", out DateTime GlobalVariableCreatedActionQueuedAt);  /*Current time in format YYYY-MM-dd , HH,MM,ss*/
-                CPH.TryGetArg("triggerId", out Guid GlobalVariableCreatedTriggerId); /*332d865c-66cb-4e95-bd1c-6f5efdeb0ff3*/
-                CPH.TryGetArg("triggerName", out string GlobalVariableCreatedTriggerName); /*Global Variable Created*/
-                CPH.TryGetArg("actionId", out Guid GlobalVariableCreatedActionID); /*3eb818ae-30bf-4412-9cc6-f90133e3f453*/
-                CPH.TryGetArg("actionName", out string GlobalVariableCreatedActionName); /*Twitch logs*/
-                CPH.TryGetArg("eventSource", out string GlobalVariableCreatedEventSource); /*misc*/
-                CPH.TryGetArg("global.lastWrite", out DateTime GlobalVariableCreatedGlobalLastWrite); /*2025-11-22 15:10:30*/
-                CPH.TryGetArg("global.name", out string GlobalVariableCreatedGlobalName); /*streamerBot*/
-                CPH.TryGetArg("global.persisted", out bool GlobalVariableCreatedGlobalPersisted);  /*True*/
-                CPH.TryGetArg("global.value", out int GlobalVariableCreatedGlobalValue);  /*2*/
+                CPH.TryGetArg("triggerCategory", out string GlobalVariableCreatedTriggerCategoty);                                                  /* The category of the trigger which executed the action */
+                CPH.TryGetArg("isTest", out bool GlobalVariableCreatedIsTest);                                                                      /*Is test trigger False/True*/
+                CPH.TryGetArg("runningActionId", out Guid GlobalVariableCreatedRunningActionId);                                                    /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime GlobalVariableCreatedActionQueuedAt);                                                  /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid GlobalVariableCreatedTriggerId);                                                                /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string GlobalVariableCreatedTriggerName);                                                          /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out Guid GlobalVariableCreatedActionID);                                                                  /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string GlobalVariableCreatedActionName);                                                            /* The name of the action being executed */
+                CPH.TryGetArg("eventSource", out string GlobalVariableCreatedEventSource);                                                          /* The service of the event which triggered the action.*/
+                CPH.TryGetArg("global.lastWrite", out DateTime GlobalVariableCreatedGlobalLastWrite);                                               /*2025-11-22 15:10:30*/
+                CPH.TryGetArg("global.name", out string GlobalVariableCreatedGlobalName);                                                           /*streamerBot*/
+                CPH.TryGetArg("global.persisted", out bool GlobalVariableCreatedGlobalPersisted);                                                   /*True*/
+                CPH.TryGetArg("global.value", out int GlobalVariableCreatedGlobalValue);                                                            /*2*/
                 return $"{GlobalVariableCreatedTriggerName} with name: <strong>{GlobalVariableCreatedGlobalName}</strong> set to value <strong>{GlobalVariableCreatedGlobalValue}</strong>.";
 
             case EventType.GlobalVariableDeleted:
-                CPH.TryGetArg("triggerCategory", out string GlobalVariableDeletedTriggerCategoty); /*Core/Global Variables*/
-                CPH.TryGetArg("isTest", out bool GlobalVariableDeletedIsTest); /*Is test trigger False/True*/
-                CPH.TryGetArg("runningActionId", out Guid GlobalVariableDeletedRunningActionId); /*d2c85714-9ab6-4ee4-b32a-e4b611fe6a3d*/
-                CPH.TryGetArg("actionQueuedAt", out DateTime GlobalVariableDeletedActionQueuedAt);  /*Current time in format YYYY-MM-dd , HH,MM,ss*/
-                CPH.TryGetArg("triggerId", out Guid GlobalVariableDeletedTriggerId); /*332d865c-66cb-4e95-bd1c-6f5efdeb0ff3*/
-                CPH.TryGetArg("triggerName", out string GlobalVariableDeletedTriggerName); /*Global Variable Created*/
-                CPH.TryGetArg("actionId", out Guid GlobalVariableDeletedActionID); /*3eb818ae-30bf-4412-9cc6-f90133e3f453*/
-                CPH.TryGetArg("actionName", out string GlobalVariableDeletedActionName); /*Twitch logs*/
-                CPH.TryGetArg("eventSource", out string GlobalVariableDeletedEventSource); /*misc*/
-                CPH.TryGetArg("global.lastWrite", out DateTime GlobalVariableDeletedGlobalLastWrite); /*2025-11-22 15:10:30*/
-                CPH.TryGetArg("global.name", out string GlobalVariableDeletedGlobalName); /*streamerBot*/
-                CPH.TryGetArg("global.persisted", out bool GlobalVariableDeletedGlobalPersisted);  /*True*/
-                CPH.TryGetArg("global.value", out int GlobalVariableDeletedGlobalValue);  /*2*/
+                CPH.TryGetArg("triggerCategory", out string GlobalVariableDeletedTriggerCategoty);                                                  /* The category of the trigger which executed the action */
+                CPH.TryGetArg("isTest", out bool GlobalVariableDeletedIsTest);                                                                      /* Is test trigger False/True */
+                CPH.TryGetArg("runningActionId", out Guid GlobalVariableDeletedRunningActionId);                                                    /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime GlobalVariableDeletedActionQueuedAt);                                                  /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid GlobalVariableDeletedTriggerId);                                                                /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string GlobalVariableDeletedTriggerName);                                                          /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out Guid GlobalVariableDeletedActionID);                                                                  /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string GlobalVariableDeletedActionName);                                                            /* The name of the action being executed */
+                CPH.TryGetArg("eventSource", out string GlobalVariableDeletedEventSource);                                                          /* The service of the event which triggered the action.*/
+                CPH.TryGetArg("global.lastWrite", out DateTime GlobalVariableDeletedGlobalLastWrite);                                               /* 2025-11-22 15:10:30 */
+                CPH.TryGetArg("global.name", out string GlobalVariableDeletedGlobalName);                                                           /* streamerBot */
+                CPH.TryGetArg("global.persisted", out bool GlobalVariableDeletedGlobalPersisted);                                                   /* True */
+                CPH.TryGetArg("global.value", out int GlobalVariableDeletedGlobalValue);                                                            /* 2 */
                 return $"{GlobalVariableDeletedTriggerName} with name: <strong>{GlobalVariableDeletedGlobalName}</strong> with value <strong>{GlobalVariableDeletedGlobalValue}</strong>.";
 
             case EventType.GlobalVariableUpdated:
-                CPH.TryGetArg("triggerCategory", out string GlobalVariableUpdatedTriggerCategoty); /*Core/Global Variables*/
-                CPH.TryGetArg("isTest", out bool GlobalVariableUpdatedIsTest); /*Is test trigger False/True*/
-                CPH.TryGetArg("runningActionId", out Guid GlobalVariableUpdatedRunningActionId); /*d2c85714-9ab6-4ee4-b32a-e4b611fe6a3d*/
-                CPH.TryGetArg("actionQueuedAt", out DateTime GlobalVariableUpdatedActionQueuedAt);  /*Current time in format YYYY-MM-dd , HH,MM,ss*/
-                CPH.TryGetArg("triggerId", out Guid GlobalVariableUpdatedTriggerId); /*332d865c-66cb-4e95-bd1c-6f5efdeb0ff3*/
-                CPH.TryGetArg("triggerName", out string GlobalVariableUpdatedTriggerName); /*Global Variable Created*/
-                CPH.TryGetArg("actionId", out Guid GlobalVariableUpdatedActionID); /*3eb818ae-30bf-4412-9cc6-f90133e3f453*/
-                CPH.TryGetArg("actionName", out string GlobalVariableUpdatedActionName); /*Twitch logs*/
-                CPH.TryGetArg("eventSource", out string GlobalVariableUpdatedEventSource); /*misc*/
-                CPH.TryGetArg("global.lastWrite", out DateTime GlobalVariableUpdatedGlobalLastWrite); /*2025-11-22 15:10:30*/
-                CPH.TryGetArg("global.name", out string GlobalVariableUpdatedGlobalName); /*streamerBot*/
-                CPH.TryGetArg("global.persisted", out bool GlobalVariableUpdatedGlobalPersisted);  /*True*/
-                CPH.TryGetArg("global.value", out int GlobalVariableUpdatedGlobalValue);  /*2*/
-                CPH.TryGetArg("global.newValue", out string GlobalVariableUpdatedGlobalNewValue); /*streamerBot*/
-                CPH.TryGetArg("global.oldValue", out string GlobalVariableUpdatedGlobalOldValue); /*streamerBot*/
+                CPH.TryGetArg("triggerCategory", out string GlobalVariableUpdatedTriggerCategoty);                                                  /* The category of the trigger which executed the action */
+                CPH.TryGetArg("isTest", out bool GlobalVariableUpdatedIsTest);                                                                      /* Is test trigger False/True */
+                CPH.TryGetArg("runningActionId", out Guid GlobalVariableUpdatedRunningActionId);                                                    /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime GlobalVariableUpdatedActionQueuedAt);                                                  /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid GlobalVariableUpdatedTriggerId);                                                                /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string GlobalVariableUpdatedTriggerName);                                                          /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out Guid GlobalVariableUpdatedActionID);                                                                  /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string GlobalVariableUpdatedActionName);                                                            /* The name of the action being executed */
+                CPH.TryGetArg("eventSource", out string GlobalVariableUpdatedEventSource);                                                          /* The service of the event which triggered the action.*/
+                CPH.TryGetArg("global.lastWrite", out DateTime GlobalVariableUpdatedGlobalLastWrite);                                               /* 2025-11-22 15:10:30 */
+                CPH.TryGetArg("global.name", out string GlobalVariableUpdatedGlobalName);                                                           /* streamerBot */
+                CPH.TryGetArg("global.persisted", out bool GlobalVariableUpdatedGlobalPersisted);                                                   /* True */
+                CPH.TryGetArg("global.value", out int GlobalVariableUpdatedGlobalValue);                                                            /* 2 */
+                CPH.TryGetArg("global.newValue", out string GlobalVariableUpdatedGlobalNewValue);                                                   /* streamerBot */
+                CPH.TryGetArg("global.oldValue", out string GlobalVariableUpdatedGlobalOldValue);                                                   /* streamerBot */
                 return $"{GlobalVariableUpdatedTriggerName} with name: <strong>{GlobalVariableUpdatedGlobalName}</strong> changed from <strong>{GlobalVariableUpdatedGlobalOldValue}</strong>. to <strong>{GlobalVariableUpdatedGlobalNewValue}</strong>";
 
 
             case EventType.GroupAdded:
-                CPH.TryGetArg("triggerCategory", out string GroupAddedTriggerCategoty); /*Core/Groups*/
-                CPH.TryGetArg("isTest", out bool GroupAddedIsTest); /*Is test trigger False/True*/
-                CPH.TryGetArg("runningActionId", out Guid GroupAddedRunningActionId); /*d2c85714-9ab6-4ee4-b32a-e4b611fe6a3d*/
-                CPH.TryGetArg("actionQueuedAt", out DateTime GroupAddedActionQueuedAt);  /*Current time in format YYYY-MM-dd , HH,MM,ss*/
-                CPH.TryGetArg("triggerId", out Guid GroupAddedTriggerId); /*332d865c-66cb-4e95-bd1c-6f5efdeb0ff3*/
-                CPH.TryGetArg("triggerName", out string GroupAddedTriggerName); /*Global Variable Created*/
-                CPH.TryGetArg("actionId", out Guid GroupAddedActionID); /*3eb818ae-30bf-4412-9cc6-f90133e3f453*/
-                CPH.TryGetArg("actionName", out string GroupAddedActionName); /*Twitch logs*/
-                CPH.TryGetArg("eventSource", out string GroupAddedEventSource); /*group*/
+                CPH.TryGetArg("triggerCategory", out string GroupAddedTriggerCategoty);                                                             /* The category of the trigger which executed the action */
+                CPH.TryGetArg("isTest", out bool GroupAddedIsTest);                                                                                 /* Is test trigger False/True */
+                CPH.TryGetArg("runningActionId", out Guid GroupAddedRunningActionId);                                                               /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime GroupAddedActionQueuedAt);                                                             /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid GroupAddedTriggerId);                                                                           /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string GroupAddedTriggerName);                                                                     /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out Guid GroupAddedActionID);                                                                             /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string GroupAddedActionName);                                                                       /* The name of the action being executed */
+                CPH.TryGetArg("eventSource", out string GroupAddedEventSource);                                                                     /* The service of the event which triggered the action.*/
                 CPH.TryGetArg("groupId", out string GroupAddedGroupId);
                 CPH.TryGetArg("groupName", out string GroupAddedGroupName);
                 CPH.TryGetArg("groupBots", out bool GroupAddedGroupBots); 
                 return $"GroupName **{GroupAddedGroupName}** has been created. Action: '{GroupAddedActionName}'.(GroupId: {GroupAddedGroupId}) (Bots: {GroupAddedGroupBots})";
 
             case EventType.GroupCleared:
-                CPH.TryGetArg("triggerCategory", out string GroupClearedTriggerCategoty); /*Core/Groups*/
-                CPH.TryGetArg("isTest", out bool GroupClearedIsTest); /*Is test trigger False/True*/
-                CPH.TryGetArg("runningActionId", out Guid GroupClearedRunningActionId); /*d2c85714-9ab6-4ee4-b32a-e4b611fe6a3d*/
-                CPH.TryGetArg("actionQueuedAt", out DateTime GroupClearedActionQueuedAt);  /*Current time in format YYYY-MM-dd , HH,MM,ss*/
-                CPH.TryGetArg("triggerId", out Guid GroupClearedTriggerId); /*332d865c-66cb-4e95-bd1c-6f5efdeb0ff3*/
-                CPH.TryGetArg("triggerName", out string GroupClearedTriggerName); /*Global Variable Created*/
-                CPH.TryGetArg("actionId", out Guid GroupClearedActionID); /*3eb818ae-30bf-4412-9cc6-f90133e3f453*/
-                CPH.TryGetArg("actionName", out string GroupClearedActionName); /*Twitch logs*/
-                CPH.TryGetArg("eventSource", out string GroupClearedEventSource); /*group*/
+                CPH.TryGetArg("triggerCategory", out string GroupClearedTriggerCategoty);                                                           /* The category of the trigger which executed the action */
+                CPH.TryGetArg("isTest", out bool GroupClearedIsTest);                                                                               /* Is test trigger False/True */
+                CPH.TryGetArg("runningActionId", out Guid GroupClearedRunningActionId);                                                             /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime GroupClearedActionQueuedAt);                                                           /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid GroupClearedTriggerId);                                                                         /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string GroupClearedTriggerName);                                                                   /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out Guid GroupClearedActionID);                                                                           /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string GroupClearedActionName);                                                                     /* The name of the action being executed */
+                CPH.TryGetArg("eventSource", out string GroupClearedEventSource);                                                                   /* The service of the event which triggered the action.*/
                 CPH.TryGetArg("groupId", out string GroupClearedGroupId);
                 CPH.TryGetArg("groupName", out string GroupClearedGroupName);
                 CPH.TryGetArg("groupBots", out bool GroupClearedGroupBots); 
                 return $"GroupName **{GroupClearedGroupName}** has been cleared. Action: '{GroupClearedActionName}'.(GroupId: {GroupClearedGroupId}) (Bots: {GroupClearedGroupBots})";
 
             case EventType.GroupRemoved:
-                CPH.TryGetArg("triggerCategory", out string GroupRemovedTriggerCategoty); /*Core/Groups*/
-                CPH.TryGetArg("isTest", out bool GroupRemovedIsTest); /*Is test trigger False/True*/
-                CPH.TryGetArg("runningActionId", out Guid GroupRemovedRunningActionId); /*d2c85714-9ab6-4ee4-b32a-e4b611fe6a3d*/
-                CPH.TryGetArg("actionQueuedAt", out DateTime GroupRemovedActionQueuedAt);  /*Current time in format YYYY-MM-dd , HH,MM,ss*/
-                CPH.TryGetArg("triggerId", out Guid GroupRemovedTriggerId); /*332d865c-66cb-4e95-bd1c-6f5efdeb0ff3*/
-                CPH.TryGetArg("triggerName", out string GroupRemovedTriggerName); /*Global Variable Created*/
-                CPH.TryGetArg("actionId", out Guid GroupRemovedActionID); /*3eb818ae-30bf-4412-9cc6-f90133e3f453*/
-                CPH.TryGetArg("actionName", out string GroupRemovedActionName); /*Twitch logs*/
-                CPH.TryGetArg("eventSource", out string GroupRemovedEventSource); /*group*/
+                CPH.TryGetArg("triggerCategory", out string GroupRemovedTriggerCategoty);                                                           /* The category of the trigger which executed the action */
+                CPH.TryGetArg("isTest", out bool GroupRemovedIsTest);                                                                               /* Is test trigger False/True */
+                CPH.TryGetArg("runningActionId", out Guid GroupRemovedRunningActionId);                                                             /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime GroupRemovedActionQueuedAt);                                                           /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid GroupRemovedTriggerId);                                                                         /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string GroupRemovedTriggerName);                                                                   /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out Guid GroupRemovedActionID);                                                                           /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string GroupRemovedActionName);                                                                     /* The name of the action being executed */
+                CPH.TryGetArg("eventSource", out string GroupRemovedEventSource);                                                                   /* The service of the event which triggered the action.*/
                 CPH.TryGetArg("groupId", out string GroupRemovedGroupId);
                 CPH.TryGetArg("groupName", out string GroupRemovedGroupName);
                 CPH.TryGetArg("groupBots", out bool GroupRemovedGroupBots); 
@@ -862,13 +879,13 @@ public class CPHInline
             // ==================== hypeRate.IO ========================
 
             case EventType.HypeRateConnected:
-                CPH.TryGetArg("triggerName", out string HypeRateConnectedTriggerName);
-                CPH.TryGetArg("eventSource", out string HypeRateConnectedEventSource);
+                CPH.TryGetArg("triggerName", out string HypeRateConnectedTriggerName);                                                              /* The name of the trigger which executed the action */
+                CPH.TryGetArg("eventSource", out string HypeRateConnectedEventSource);                                                              /* The service of the event which triggered the action.*/
                 return $"have been <strong>{HypeRateConnectedTriggerName}</strong>";
 
             case EventType.HypeRateDisconnected:
-                CPH.TryGetArg("triggerName", out string HypeRateDisconnectedTriggerName);
-                CPH.TryGetArg("eventSource", out string HypeRateDisconnectedEventSource);
+                CPH.TryGetArg("triggerName", out string HypeRateDisconnectedTriggerName);                                                           /* The name of the trigger which executed the action */
+                CPH.TryGetArg("eventSource", out string HypeRateDisconnectedEventSource);                                                           /* The service of the event which triggered the action.*/
                 return $"have been <strong>{HypeRateDisconnectedTriggerName}</strong>";
 
             case EventType.HypeRateHeartRatePulse:
@@ -967,7 +984,7 @@ public class CPHInline
                 return $"<strong>No description provided</strong>";
 
             case EventType.KickPresentViewers:
-                CPH.TryGetArg("triggerName", out string KickPresentViewers);
+                CPH.TryGetArg("triggerName", out string KickPresentViewers);                                                                        /* The name of the trigger which executed the action */
                 return $"<strong>📊 Present viewers check</strong>";
 
             case EventType.KickResubscription:
@@ -1154,127 +1171,127 @@ public class CPHInline
 
             // ==================== Misc ========================
             case EventType.Test:
-                CPH.TryGetArg("isTest", out bool isTest);  /*if test tigger is False our true */
-                CPH.TryGetArg("triggerCategory", out string TestTriggerCategory); /*Core*/
-                CPH.TryGetArg("runningActionId", out Guid TestRunningActionId); /*7e4ff3c3-ad72-4805-86df-8d3b92091ef1*/
-                CPH.TryGetArg("actionQueuedAt", out DateTime TestActionQueuedAt); /*Current time in format YYYY-MM-dd , HH,MM,ss*/
-                CPH.TryGetArg("triggerId", out Guid TestTriggerId); /*eb7ed971-6613-40d7-99c4-3850720b3966*/
-                CPH.TryGetArg("triggerName", out string TestTriggerName); /*Test*/
-                CPH.TryGetArg("actionId", out Guid TestActionId); /*3eb818ae-30bf-4412-9cc6-f90133e3f453*/
-                CPH.TryGetArg("actionName", out string TestActionName); /*Action group*/
-                CPH.TryGetArg("eventSource", out string TestEventSource); /*Misc*/
+                CPH.TryGetArg("isTest", out bool isTest);                                                                                           /* if test tigger is False our true */
+                CPH.TryGetArg("triggerCategory", out string TestTriggerCategory);                                                                   /* The category of the trigger which executed the action */
+                CPH.TryGetArg("runningActionId", out Guid TestRunningActionId);                                                                     /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime TestActionQueuedAt);                                                                   /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid TestTriggerId);                                                                                 /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string TestTriggerName);                                                                           /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out Guid TestActionId);                                                                                   /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string TestActionName);                                                                             /* The name of the action being executed */
+                CPH.TryGetArg("eventSource", out string TestEventSource);                                                                           /* The service of the event which triggered the action.*/
                 return $"{TestTriggerName} trigger event in actions group<strong> • {TestActionName} • </strong>";
 
             // ==================== OBS ========================
             case EventType.ObsConnected:
-                CPH.TryGetArg("triggerCategory", out string ObsConnectedTriggerCategory); /*OBS Studio*/
-                CPH.TryGetArg("isTest", out bool ObsConnectedIsTest);  /*if test tigger is False our true */
-                CPH.TryGetArg("runningActionId", out Guid ObsConnectedRunningActionId);  /*1786c41f-27df-47ca-8eea-c1e70a5bf5b3*/
-                CPH.TryGetArg("actionQueuedAt", out DateTime ObsConnectedActionQueuedAt); /*Current time in format YYYY-MM-dd , HH,MM,ss*/
-                CPH.TryGetArg("triggerId", out Guid ObsConnectedTriggerId); /*b946589b-0c88-4b84-a588-11d158c81c62*/
-                CPH.TryGetArg("triggerName", out string ObsConnectedTriggerName); /*Connected*/
-                CPH.TryGetArg("actionId", out Guid ObsConnectedActionId); /*3eb818ae-30bf-4412-9cc6-f90133e3f453*/
-                CPH.TryGetArg("actionName", out string ObsConnectedActionName); /*Action group*/
-                CPH.TryGetArg("eventSource", out string ObsConnectedEventSource); /*obs*/
+                CPH.TryGetArg("triggerCategory", out string ObsConnectedTriggerCategory);                                                           /* The category of the trigger which executed the action */
+                CPH.TryGetArg("isTest", out bool ObsConnectedIsTest);                                                                               /* if test tigger is False our true */
+                CPH.TryGetArg("runningActionId", out Guid ObsConnectedRunningActionId);                                                             /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime ObsConnectedActionQueuedAt);                                                           /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid ObsConnectedTriggerId);                                                                         /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string ObsConnectedTriggerName);                                                                   /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out Guid ObsConnectedActionId);                                                                           /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string ObsConnectedActionName);                                                                     /* The name of the action being executed */
+                CPH.TryGetArg("eventSource", out string ObsConnectedEventSource);                                                                   /* The service of the event which triggered the action.*/
                 return $"{ObsConnectedTriggerCategory}<strong> have been </strong> {ObsConnectedTriggerName}";
 
             case EventType.ObsDisconnected:
-                CPH.TryGetArg("triggerCategory", out string ObsDisconnectedTriggerCategory); /*OBS Studio*/
-                CPH.TryGetArg("isTest", out bool ObsDisconnectedIsTest);  /*if test tigger is False our true */
-                CPH.TryGetArg("runningActionId", out Guid ObsDisconnectedRunningActionId);  /*1786c41f-27df-47ca-8eea-c1e70a5bf5b3*/
-                CPH.TryGetArg("actionQueuedAt", out DateTime ObsDisconnectedActionQueuedAt); /*Current time in format YYYY-MM-dd , HH,MM,ss*/
-                CPH.TryGetArg("triggerId", out Guid ObsDisconnectedTriggerId); /*b946589b-0c88-4b84-a588-11d158c81c62*/
-                CPH.TryGetArg("triggerName", out string ObsDisconnectedTriggerName); /*Connected*/
-                CPH.TryGetArg("actionId", out Guid ObsDisconnectedActionId); /*3eb818ae-30bf-4412-9cc6-f90133e3f453*/
-                CPH.TryGetArg("actionName", out string ObsDisconnectedActionName); /*Action group*/
-                CPH.TryGetArg("eventSource", out string ObsDisconnectedEventSource); /*obs*/
+                CPH.TryGetArg("triggerCategory", out string ObsDisconnectedTriggerCategory);                                                        /* The category of the trigger which executed the action */
+                CPH.TryGetArg("isTest", out bool ObsDisconnectedIsTest);                                                                            /* if test tigger is False our true */
+                CPH.TryGetArg("runningActionId", out Guid ObsDisconnectedRunningActionId);                                                          /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime ObsDisconnectedActionQueuedAt);                                                        /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid ObsDisconnectedTriggerId);                                                                      /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string ObsDisconnectedTriggerName);                                                                /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out Guid ObsDisconnectedActionId);                                                                        /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string ObsDisconnectedActionName);                                                                  /* The name of the action being executed */
+                CPH.TryGetArg("eventSource", out string ObsDisconnectedEventSource);                                                                /* The service of the event which triggered the action.*/
                 return $"{ObsDisconnectedTriggerCategory}<strong> have been </strong> {ObsDisconnectedTriggerName}";
                 
 
             case EventType.ObsEvent:
-                CPH.TryGetArg("triggerCategory", out string ObsEventTriggerCategory); /*OBS Studio*/
-                CPH.TryGetArg("isTest", out bool ObsEventIsTest);  /*if test tigger is False our true */
-                CPH.TryGetArg("runningActionId", out Guid ObsEventRunningActionId);  /*1786c41f-27df-47ca-8eea-c1e70a5bf5b3*/
-                CPH.TryGetArg("actionQueuedAt", out DateTime ObsEventActionQueuedAt); /*Current time in format YYYY-MM-dd , HH,MM,ss*/
-                CPH.TryGetArg("triggerId", out Guid ObsEventTriggerId); /*b946589b-0c88-4b84-a588-11d158c81c62*/
-                CPH.TryGetArg("triggerName", out string ObsEventTriggerName); /*Connected*/
-                CPH.TryGetArg("actionId", out Guid ObsEventActionId); /*3eb818ae-30bf-4412-9cc6-f90133e3f453*/
-                CPH.TryGetArg("actionName", out string ObsEventActionName); /*Action group*/
-                CPH.TryGetArg("eventSource", out string ObsEventEventSource); /*obs*/
-                CPH.TryGetArg("obsEvent.event", out string ObsEventEvent); /*obs*/
+                CPH.TryGetArg("triggerCategory", out string ObsEventTriggerCategory);                                                               /* The category of the trigger which executed the action */
+                CPH.TryGetArg("isTest", out bool ObsEventIsTest);                                                                                   /* if test tigger is False our true */
+                CPH.TryGetArg("runningActionId", out Guid ObsEventRunningActionId);                                                                 /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime ObsEventActionQueuedAt);                                                               /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid ObsEventTriggerId);                                                                             /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string ObsEventTriggerName);                                                                       /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out Guid ObsEventActionId);                                                                               /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string ObsEventActionName);                                                                         /* The name of the action being executed */
+                CPH.TryGetArg("eventSource", out string ObsEventEventSource);                                                                       /* The service of the event which triggered the action.*/
+                CPH.TryGetArg("obsEvent.event", out string ObsEventEvent);                                                                          /* obs */
                 return $"<strong>No description provided</strong>";
 
             case EventType.ObsRecordingStarted:
-                CPH.TryGetArg("triggerCategory", out string ObsRecordingStartedTriggerCategory); /*OBS Studio*/
-                CPH.TryGetArg("triggerName", out string ObsRecordingStartedTriggerName); /*Recording Started*/
-                CPH.TryGetArg("obs.id",out Guid ObsRecordingStartedObsID); /*Recording Started*/
-                CPH.TryGetArg("eventSource", out string ObsRecordingStartedEventSource); /*obs*/
+                CPH.TryGetArg("triggerCategory", out string ObsRecordingStartedTriggerCategory);                                                    /* The category of the trigger which executed the action */
+                CPH.TryGetArg("triggerName", out string ObsRecordingStartedTriggerName);                                                            /* The name of the trigger which executed the action */
+                CPH.TryGetArg("obs.id",out Guid ObsRecordingStartedObsID);                                                                          /* Recording Started */
+                CPH.TryGetArg("eventSource", out string ObsRecordingStartedEventSource);                                                            /* The service of the event which triggered the action.*/
                 return $"<strong>No description provided</strong>";
 
             case EventType.ObsRecordingStopped:
-                CPH.TryGetArg("triggerCategory", out string ObsRecordingStoppedTriggerCategory); /*OBS Studio*/
-                CPH.TryGetArg("triggerName", out string ObsRecordingStoppedTriggerName); /*Recording Started*/
-                CPH.TryGetArg("obs.id",out Guid ObsRecordingStoppedObsID); /*Recording Started*/
-                CPH.TryGetArg("eventSource", out string ObsRecordingStoppedEventSource); /*obs*/
+                CPH.TryGetArg("triggerCategory", out string ObsRecordingStoppedTriggerCategory);                                                    /* The category of the trigger which executed the action */
+                CPH.TryGetArg("triggerName", out string ObsRecordingStoppedTriggerName);                                                            /* The name of the trigger which executed the action */
+                CPH.TryGetArg("obs.id",out Guid ObsRecordingStoppedObsID);                                                                          /* Recording Started */
+                CPH.TryGetArg("eventSource", out string ObsRecordingStoppedEventSource);                                                            /* The service of the event which triggered the action.*/
                 return $"<strong>No description provided</strong>";
 
             case EventType.ObsSceneChanged:
-                CPH.TryGetArg("triggerCategory", out string ObsSceneChangedTriggerCategory); /*OBS Studio*/
-                CPH.TryGetArg("triggerName", out string ObsSceneChangedTriggerName); /*Scene Changed*/
+                CPH.TryGetArg("triggerCategory", out string ObsSceneChangedTriggerCategory);                                                        /* The category of the trigger which executed the action */
+                CPH.TryGetArg("triggerName", out string ObsSceneChangedTriggerName);                                                                /* The name of the trigger which executed the action */
                 CPH.TryGetArg("obs.id",out Guid ObsSceneChangedObsID); /*Recording Started*/
-                CPH.TryGetArg("eventSource", out string ObsSceneChangedEventSource); /*obs*/
+                CPH.TryGetArg("eventSource", out string ObsSceneChangedEventSource);                                                                /* The service of the event which triggered the action.*/
                 CPH.TryGetArg("SomeScene", out string ObsSceneChangedSomeScene); /*obs*/
                 return $"{ObsSceneChangedTriggerCategory}<strong> Scene change to </strong>{ObsSceneChangedSomeScene}";
 
             case EventType.ObsStreamingStarted:
-                CPH.TryGetArg("triggerCategory", out string ObsStreamingStartedTriggerCategory);  /* exmple OBS Studio*/
+                CPH.TryGetArg("triggerCategory", out string ObsStreamingStartedTriggerCategory);                                                    /* The category of the trigger which executed the action */
                 CPH.TryGetArg("isTest", out bool ObsStreamingStartedisTest); /* example True/False */
-                CPH.TryGetArg("runningActionId", out Guid ObsStreamingStartedRunningActionId); /* example 067f3fc4-9f3e-4d0a-94d7-7a496fae752c*/
-                CPH.TryGetArg("actionQueuedAt", out DateTime ObsStreamingStartedActionQueuedAt); /* Example 2025-11-22 14:57:16*/
-                CPH.TryGetArg("triggerId", out Guid ObsStreamingStartedTriggerId); /* fd6883af-9da4-4cc5-b005-5a7f02e47858 */
-                CPH.TryGetArg("triggerName", out string ObsStreamingStartedTriggerName); /*Streaming Started*/
-                CPH.TryGetArg("actionId", out Guid ObsStreamingStartedActionId); /*ee970708-d7c5-4a77-805b-c672e2ce4712*/
-                CPH.TryGetArg("actionName", out string ObsStreamingStartedActionName); /*pc logger*/ 
-                CPH.TryGetArg("eventSource", out string ObsStreamingStartedEventSource); /*obs*/
+                CPH.TryGetArg("runningActionId", out Guid ObsStreamingStartedRunningActionId);                                                      /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime ObsStreamingStartedActionQueuedAt);                                                    /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid ObsStreamingStartedTriggerId);                                                                  /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string ObsStreamingStartedTriggerName);                                                            /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out Guid ObsStreamingStartedActionId);                                                                    /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string ObsStreamingStartedActionName);                                                              /* The name of the action being executed */ 
+                CPH.TryGetArg("eventSource", out string ObsStreamingStartedEventSource);                                                            /* The service of the event which triggered the action.*/
                 return $"{ObsStreamingStartedTriggerCategory}<strong> {ObsStreamingStartedTriggerName}</strong>";
 
             case EventType.ObsStreamingStopped:
-                CPH.TryGetArg("triggerCategory", out string ObsStreamingStoppedTriggerCategory);  /* exmple OBS Studio*/
+                CPH.TryGetArg("triggerCategory", out string ObsStreamingStoppedTriggerCategory);                                                    /* The category of the trigger which executed the action */
                 CPH.TryGetArg("isTest", out bool ObsStreamingStoppedisTest); /* example True/False */
-                CPH.TryGetArg("runningActionId", out Guid ObsStreamingStoppedRunningActionId); /* example 067f3fc4-9f3e-4d0a-94d7-7a496fae752c*/
-                CPH.TryGetArg("actionQueuedAt", out DateTime ObsStreamingStoppedActionQueuedAt); /* Example 2025-11-22 14:57:16*/
-                CPH.TryGetArg("triggerId", out Guid ObsStreamingStoppedTriggerId); /* fd6883af-9da4-4cc5-b005-5a7f02e47858 */
-                CPH.TryGetArg("triggerName", out string ObsStreamingStoppedTriggerName); /*Streaming Started*/
-                CPH.TryGetArg("actionId", out Guid ObsStreamingStoppedActionId); /*ee970708-d7c5-4a77-805b-c672e2ce4712*/
-                CPH.TryGetArg("actionName", out string ObsStreamingStoppedActionName); /*pc logger*/ 
-                CPH.TryGetArg("eventSource", out string ObsStreamingStoppedEventSource); /*obs*/
+                CPH.TryGetArg("runningActionId", out Guid ObsStreamingStoppedRunningActionId);                                                      /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime ObsStreamingStoppedActionQueuedAt);                                                    /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid ObsStreamingStoppedTriggerId);                                                                  /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string ObsStreamingStoppedTriggerName);                                                            /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out Guid ObsStreamingStoppedActionId);                                                                    /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string ObsStreamingStoppedActionName);                                                              /* The name of the action being executed */  
+                CPH.TryGetArg("eventSource", out string ObsStreamingStoppedEventSource);                                                            /* The service of the event which triggered the action.*/
                 return $"{ObsStreamingStoppedTriggerCategory}<strong> {ObsStreamingStoppedTriggerName}</strong>";
 
             case EventType.ObsVendorEvent:
-                CPH.TryGetArg("triggerCategory", out string ObsVendorEventTriggerCategory);  /* exmple OBS Studio*/
+                CPH.TryGetArg("triggerCategory", out string ObsVendorEventTriggerCategory);                                                         /* The category of the trigger which executed the action */
                 CPH.TryGetArg("isTest", out bool ObsVendorEventisTest); /* example True/False */
-                CPH.TryGetArg("runningActionId", out Guid ObsVendorEventRunningActionId); /* example 067f3fc4-9f3e-4d0a-94d7-7a496fae752c*/
-                CPH.TryGetArg("actionQueuedAt", out DateTime ObsVendorEventActionQueuedAt); /* Example 2025-11-22 14:57:16*/
-                CPH.TryGetArg("triggerId", out Guid ObsVendorEventTriggerId); /* fd6883af-9da4-4cc5-b005-5a7f02e47858 */
-                CPH.TryGetArg("triggerName", out string ObsVendorEventTriggerName); /*Streaming Started*/
-                CPH.TryGetArg("actionId", out Guid ObsVendorEventActionId); /*ee970708-d7c5-4a77-805b-c672e2ce4712*/
-                CPH.TryGetArg("actionName", out string ObsVendorEventActionName); /*pc logger*/ 
-                CPH.TryGetArg("eventSource", out string ObsVendorEventEventSource); /*obs*/
+                CPH.TryGetArg("runningActionId", out Guid ObsVendorEventRunningActionId);                                                           /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime ObsVendorEventActionQueuedAt);                                                         /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid ObsVendorEventTriggerId);                                                                       /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string ObsVendorEventTriggerName);                                                                 /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out Guid ObsVendorEventActionId);                                                                         /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string ObsVendorEventActionName);                                                                   /* The name of the action being executed */  
+                CPH.TryGetArg("eventSource", out string ObsVendorEventEventSource);                                                                 /* The service of the event which triggered the action.*/
                 CPH.TryGetArg("obsVendorEvent.vendor", out string ObsVendorEventVendor); /**/
                 CPH.TryGetArg("obsVendorEvent.event", out string ObsVendorEventEvent); /**/
                 return $"<strong>No description provided</strong>";
 
             // ==================== Pally.gg ========================
             case EventType.PallyggCampaignTip:
-                CPH.TryGetArg("triggerCategory", out string PallyggCampaignTipTriggerCategory);                         /*Integrations/Pally.gg*/
+                CPH.TryGetArg("triggerCategory", out string PallyggCampaignTipTriggerCategory);                                                     /* The category of the trigger which executed the action */
                 CPH.TryGetArg("isTest", out bool PallyggCampaignTipisTest);                                             /* example True/False */
-                CPH.TryGetArg("runningActionId", out Guid PallyggCampaignTipRunningActionId);                           /* example 2c90c1a6-c793-48e5-98b5-c313cc34ea1d*/
-                CPH.TryGetArg("actionQueuedAt", out DateTime PallyggCampaignTipActionQueuedAt);                         /* Example 2025-11-22 14:57:16*/
-                CPH.TryGetArg("triggerId", out Guid PallyggCampaignTipTriggerId);                                       /* example 59f7ee2f-4378-4b99-95d5-049bd3608136*/
-                CPH.TryGetArg("triggerName", out string PallyggCampaignTipTriggerName);                                 /*Campaign Tip*/
-                CPH.TryGetArg("actionId", out Guid PallyggCampaignTipActionId);                                         /* example 3eb818ae-30bf-4412-9cc6-f90133e3f453*/
-                CPH.TryGetArg("actionName", out string PallyggCampaignTipActionName);                                   /*Twitch logs*/
-                CPH.TryGetArg("eventSource", out string PallyggCampaignTipEventSource);                                 /*pallygg*/
+                CPH.TryGetArg("runningActionId", out Guid PallyggCampaignTipRunningActionId);                                                       /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime PallyggCampaignTipActionQueuedAt);                                                     /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid PallyggCampaignTipTriggerId);                                                                   /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string PallyggCampaignTipTriggerName);                                                             /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out Guid PallyggCampaignTipActionId);                                                                     /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string PallyggCampaignTipActionName);                                                               /* The name of the action being executed */ 
+                CPH.TryGetArg("eventSource", out string PallyggCampaignTipEventSource);                                                             /* The service of the event which triggered the action.*/
                 CPH.TryGetArg("campaignId", out string PallyggCampaignTipCampaignId);                                   /*0x9b195b4f,0x89f6,0x419e,{0xb3,0x1a,0xd7,0x81,0x8c,0x8e,0x8b,0xf7*/
                 CPH.TryGetArg("campaign", out string PallyggCampaignTipcampaign);                                       /*pally*/
                 CPH.TryGetArg("campaignTitle", out string PallyggCampaignTipCampaignTitle);                             /*"Test Campaign"*/
@@ -1302,41 +1319,41 @@ public class CPHInline
 
 
             case EventType.PallyggConnected:
-                CPH.TryGetArg("triggerCategory", out string PallyggConnectedTriggerCategory);                         /*Integrations/Pally.gg*/
+                CPH.TryGetArg("triggerCategory", out string PallyggConnectedTriggerCategory);                                                       /* The category of the trigger which executed the action */
                 CPH.TryGetArg("isTest", out bool PallyggConnectedisTest);                                             /* example True/False */
-                CPH.TryGetArg("runningActionId", out Guid PallyggConnectedRunningActionId);                           /* example e1ea030a-a2ee-4eb1-9a9c-3d066ac18057*/
-                CPH.TryGetArg("actionQueuedAt", out DateTime PallyggConnectedActionQueuedAt);                         /* Example 2025-11-22 14:57:16*/
-                CPH.TryGetArg("triggerId", out Guid PallyggConnectedTriggerId);                                       /* example 59f7ee2f-4378-4b99-95d5-049bd3608136*/
-                CPH.TryGetArg("triggerName", out string PallyggConnectedTriggerName);                                 /* Connected*/
-                CPH.TryGetArg("actionId", out Guid PallyggConnectedActionId);                                         /* example 3eb818ae-30bf-4412-9cc6-f90133e3f453*/
-                CPH.TryGetArg("actionName", out string PallyggConnectedActionName);                                   /*Twitch logs*/
-                CPH.TryGetArg("eventSource", out string PallyggConnectedEventSource);                                 /*pallygg*/
+                CPH.TryGetArg("runningActionId", out Guid PallyggConnectedRunningActionId);                                                         /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime PallyggConnectedActionQueuedAt);                                                       /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid PallyggConnectedTriggerId);                                                                     /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string PallyggConnectedTriggerName);                                                               /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out Guid PallyggConnectedActionId);                                                                       /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string PallyggConnectedActionName);                                                                 /* The name of the action being executed */ 
+                CPH.TryGetArg("eventSource", out string PallyggConnectedEventSource);                                                               /* The service of the event which triggered the action.*/
                 return $"{PallyggConnectedEventSource}<strong> {PallyggConnectedTriggerName}</strong>";
 
             case EventType.PallyggDisconnected:
-                CPH.TryGetArg("triggerCategory", out string PallyggDisconnectedTriggerCategory);                         /*Integrations/Pally.gg*/
-                CPH.TryGetArg("isTest", out bool PallyggDisconnectedisTest);                                             /* example True/False */
-                CPH.TryGetArg("runningActionId", out Guid PallyggDisconnectedRunningActionId);                           /* example e1ea030a-a2ee-4eb1-9a9c-3d066ac18057*/
-                CPH.TryGetArg("actionQueuedAt", out DateTime PallyggDisconnectedActionQueuedAt);                         /* Example 2025-11-22 14:57:16*/
-                CPH.TryGetArg("triggerId", out Guid PallyggDisconnectedTriggerId);                                       /* example 59f7ee2f-4378-4b99-95d5-049bd3608136*/
-                CPH.TryGetArg("triggerName", out string PallyggDisconnectedTriggerName);                                 /* Connected*/
-                CPH.TryGetArg("actionId", out Guid PallyggDisconnectedActionId);                                         /* example 3eb818ae-30bf-4412-9cc6-f90133e3f453*/
-                CPH.TryGetArg("actionName", out string PallyggDisconnectedActionName);                                   /*SB action name*/
-                CPH.TryGetArg("eventSource", out string PallyggDisconnectedEventSource);                                 /*pallygg*/
+                CPH.TryGetArg("triggerCategory", out string PallyggDisconnectedTriggerCategory);                                                    /* The category of the trigger which executed the action */
+                CPH.TryGetArg("isTest", out bool PallyggDisconnectedisTest);                                                                        /* example True/False */
+                CPH.TryGetArg("runningActionId", out Guid PallyggDisconnectedRunningActionId);                                                      /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime PallyggDisconnectedActionQueuedAt);                                                    /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid PallyggDisconnectedTriggerId);                                                                  /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string PallyggDisconnectedTriggerName);                                                            /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out Guid PallyggDisconnectedActionId);                                                                    /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string PallyggDisconnectedActionName);                                                              /* The name of the action being executed */ 
+                CPH.TryGetArg("eventSource", out string PallyggDisconnectedEventSource);                                                            /* The service of the event which triggered the action.*/
                 return $"{PallyggDisconnectedEventSource}<strong> {PallyggDisconnectedTriggerName}</strong>";
 
             // ==================== Patreon ========================
 
             case EventType.PatreonFollowCreated:
-                CPH.TryGetArg("triggerCategory", out string PatreonFollowCreatedTriggerCategory);                                                   /*Integrations/Patreon*/
+                CPH.TryGetArg("triggerCategory", out string PatreonFollowCreatedTriggerCategory);                                                   /* The category of the trigger which executed the action */
                 CPH.TryGetArg("isTest", out bool PatreonFollowCreatedisTest);                                                                       /* example True/False */
-                CPH.TryGetArg("runningActionId", out Guid PatreonFollowCreatedRunningActionId);                                                     /* example e1ea030a-a2ee-4eb1-9a9c-3d066ac18057*/
-                CPH.TryGetArg("actionQueuedAt", out DateTime PatreonFollowCreatedActionQueuedAt);                                                   /* Example 2025-11-22 14:57:16*/
-                CPH.TryGetArg("triggerId", out Guid PatreonFollowCreatedTriggerId);                                                                 /* example 59f7ee2f-4378-4b99-95d5-049bd3608136*/
-                CPH.TryGetArg("triggerName", out string PatreonFollowCreatedTriggerName);                                                           /* Follow Created*/
-                CPH.TryGetArg("actionId", out Guid PatreonFollowCreatedActionId);                                                                   /* example 3eb818ae-30bf-4412-9cc6-f90133e3f453*/
-                CPH.TryGetArg("actionName", out string PatreonFollowCreatedActionName);                                                             /* SB action name*/
-                CPH.TryGetArg("eventSource", out string PatreonFollowCreatedEventSource);                                                           /* patreon */
+                CPH.TryGetArg("runningActionId", out Guid PatreonFollowCreatedRunningActionId);                                                     /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime PatreonFollowCreatedActionQueuedAt);                                                   /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid PatreonFollowCreatedTriggerId);                                                                 /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string PatreonFollowCreatedTriggerName);                                                           /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out Guid PatreonFollowCreatedActionId);                                                                   /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string PatreonFollowCreatedActionName);                                                             /* The name of the action being executed */ 
+                CPH.TryGetArg("eventSource", out string PatreonFollowCreatedEventSource);                                                           /* The service of the event which triggered the action.*/
                 CPH.TryGetArg("id", out string PatreonFollowCreatedId);                                                                             /* b587ac37-ac33-41dd-99df-edf8a307f6d6 */
                 CPH.TryGetArg("attributes.campaign_lifetime_support_cents", out int PatreonFollowCreatedAttributesCampaignLifetimeSupportCents);    /* 0 */
                 CPH.TryGetArg("attributes.currently_entitled_amount_cents", out int PatreonFollowCreatedAttributesCurrentlyEntitledAmountCents);    /* 0 */
@@ -1443,15 +1460,15 @@ public class CPHInline
                 return $"<strong>No description provided</strong>";
 
             case EventType.StreamerbotStarted:
-                CPH.TryGetArg("triggerCategory", out string StreamerbotStarted); /*Core*/
+                CPH.TryGetArg("triggerCategory", out string StreamerbotStarted);                                                                    /* The category of the trigger which executed the action */
                 CPH.TryGetArg("isTest", out bool StreamerbotStartedisTest);  /* Test trigger False/True*/
-                CPH.TryGetArg("runningActionId", out Guid StreamerbotStartedRunningActionId); /*495a0bd2-0253-4c1e-9521-0201ce1af3d0*/
-                CPH.TryGetArg("actionQueuedAt", out DateTime StreamerbotStartedActionQueuedAt);  /*Current time in format YYYY-MM-dd , HH,MM,ss*/
-                CPH.TryGetArg("triggerId", out Guid StreamerbotStartedTriggerId);  /*18b089ff-70f3-4cb4-a521-7bb519b8939a*/
-                CPH.TryGetArg("triggerName", out Guid StreamerbotStartedTriggerName); /*Streamer.bot Started*/
-                CPH.TryGetArg("actionId", out string StreamerBotStartedActionId);  /*3eb818ae-30bf-4412-9cc6-f90133e3f453*/
-                CPH.TryGetArg("actionName", out string StreamerBotStartedActionName); /*Twitch logs*/
-                CPH.TryGetArg("eventSource", out string StreamerBotStartedEventSource); /*Misc */
+                CPH.TryGetArg("runningActionId", out Guid StreamerbotStartedRunningActionId);                                                       /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime StreamerbotStartedActionQueuedAt);                                                     /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid StreamerbotStartedTriggerId);                                                                   /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out Guid StreamerbotStartedTriggerName);                                                               /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out string StreamerBotStartedActionId);                                                                   /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string StreamerBotStartedActionName);                                                               /* The name of the action being executed */ 
+                CPH.TryGetArg("eventSource", out string StreamerBotStartedEventSource);                                                             /* The service of the event which triggered the action.*/
                 return $"Streamerbot has <strong> started</strong> and is now running";
 
             // ==================== Streamlabs ========================
@@ -1469,27 +1486,27 @@ public class CPHInline
                 return $"<strong>No description provided</strong>";
             // ==================== Streamlabs Desktop ========================
             case EventType.StreamlabsDesktopConnected:
-                CPH.TryGetArg("triggerCategory", out string StreamlabsDesktopConnectedTriggerCategory); /*Streamlabs Desktop*/
+                CPH.TryGetArg("triggerCategory", out string StreamlabsDesktopConnectedTriggerCategory);                                             /* The category of the trigger which executed the action */
                 CPH.TryGetArg("isTest", out bool StreamlabsDesktopConnectedisTest);  /* Test trigger False/True*/
-                CPH.TryGetArg("runningActionId", out Guid StreamlabsDesktopConnectedRunningActionId); /*78e2ff84-bbb5-425c-8cd6-1dbc9b338b8c*/
-                CPH.TryGetArg("actionQueuedAt", out DateTime StreamlabsDesktopConnectedActionQueuedAt);  /*Current time in format YYYY-MM-dd , HH,MM,ss*/
-                CPH.TryGetArg("triggerId", out Guid StreamlabsDesktopConnectedTriggerId);  /*6888963d-5296-44bd-b08f-5ebdb2dd770f*/
-                CPH.TryGetArg("triggerName", out Guid StreamlabsDesktopConnectedTriggerName); /*Connected*/
-                CPH.TryGetArg("actionId", out string StreamlabsDesktopConnectedActionId);  /*3eb818ae-30bf-4412-9cc6-f90133e3f453*/
-                CPH.TryGetArg("actionName", out string StreamlabsDesktopConnectedActionName); /*Twitch logs*/
-                CPH.TryGetArg("eventSource", out string StreamlabsDesktopConnectedEventSource); /*streamlabsdesktop"*/
+                CPH.TryGetArg("runningActionId", out Guid StreamlabsDesktopConnectedRunningActionId);                                               /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime StreamlabsDesktopConnectedActionQueuedAt);                                             /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid StreamlabsDesktopConnectedTriggerId);                                                           /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out Guid StreamlabsDesktopConnectedTriggerName);                                                       /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out string StreamlabsDesktopConnectedActionId);                                                           /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string StreamlabsDesktopConnectedActionName);                                                       /* The name of the action being executed */ 
+                CPH.TryGetArg("eventSource", out string StreamlabsDesktopConnectedEventSource);                                                     /* The service of the event which triggered the action.*/
                 return $"have been <strong>{StreamlabsDesktopConnectedTriggerName}</strong>";
 
             case EventType.StreamlabsDesktopDisconnected:
-                CPH.TryGetArg("triggerCategory", out string StreamlabsDesktopDisconnectedTriggerCategory); /*Streamlabs Desktop*/
+                CPH.TryGetArg("triggerCategory", out string StreamlabsDesktopDisconnectedTriggerCategory);                                          /* The category of the trigger which executed the action */
                 CPH.TryGetArg("isTest", out bool StreamlabsDesktopDisconnectedisTest);  /* Test trigger False/True*/
-                CPH.TryGetArg("runningActionId", out Guid StreamlabsDesktopDisconnectedRunningActionId); /*78e2ff84-bbb5-425c-8cd6-1dbc9b338b8c*/
-                CPH.TryGetArg("actionQueuedAt", out DateTime StreamlabsDesktopDisconnectedActionQueuedAt);  /*Current time in format YYYY-MM-dd , HH,MM,ss*/
-                CPH.TryGetArg("triggerId", out Guid StreamlabsDesktopDisconnectedTriggerId);  /*6888963d-5296-44bd-b08f-5ebdb2dd770f*/
-                CPH.TryGetArg("triggerName", out Guid StreamlabsDesktopDisconnectedTriggerName); /*Connected*/
-                CPH.TryGetArg("actionId", out string StreamlabsDesktopDisconnectedActionId);  /*3eb818ae-30bf-4412-9cc6-f90133e3f453*/
-                CPH.TryGetArg("actionName", out string StreamlabsDesktopDisconnectedActionName); /*Twitch logs*/
-                CPH.TryGetArg("eventSource", out string StreamlabsDesktopDisconnectedEventSource); /*streamlabsdesktop"*/
+                CPH.TryGetArg("runningActionId", out Guid StreamlabsDesktopDisconnectedRunningActionId);                                            /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime StreamlabsDesktopDisconnectedActionQueuedAt);                                          /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid StreamlabsDesktopDisconnectedTriggerId);                                                        /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out Guid StreamlabsDesktopDisconnectedTriggerName);                                                    /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out string StreamlabsDesktopDisconnectedActionId);                                                        /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string StreamlabsDesktopDisconnectedActionName);                                                    /* The name of the action being executed */ 
+                CPH.TryGetArg("eventSource", out string StreamlabsDesktopDisconnectedEventSource);                                                  /* The service of the event which triggered the action.*/
                 return $"have been <strong>{StreamlabsDesktopDisconnectedTriggerName}</strong>";
 
             case EventType.StreamlabsDesktopRecordingStarted:
@@ -1524,17 +1541,17 @@ public class CPHInline
                 return $"<strong>No description provided</strong>";
             // ==================== Timed Actions ========================
            case EventType.TimedAction:
-    			CPH.TryGetArg("actionName", out string TimedActionName);
+    			CPH.TryGetArg("actionName", out string TimedActionName);                                                                            /* The name of the action being executed */ 
     			CPH.TryGetArg("timerName", out string TimedActiontimerName);
-    			CPH.TryGetArg("broadcastUserName", out string TimedActionbroadcastUserName);        
-    			CPH.TryGetArg("triggerCategory", out String TimedActionTriggerCategory);
+    			CPH.TryGetArg("broadcastUserName", out string TimedActionbroadcastUserName);                                                        /* The Twitch display name of the broadcaster account */
+    			CPH.TryGetArg("triggerCategory", out String TimedActionTriggerCategory);                                                            /* The category of the trigger which executed the action */
     			CPH.TryGetArg("isTest", out bool TimedActionIsTest);
-    			CPH.TryGetArg("runningActionId", out Guid TimedActionRunningActionId);
-    			CPH.TryGetArg("actionQueuedAt", out DateTime TimedActionActionQueuedAt);
-    			CPH.TryGetArg("triggerId", out Guid TimedActionTriggerID);
-    			CPH.TryGetArg("triggerName", out string TimedActionTriggerName);
-    			CPH.TryGetArg("actionId", out Guid TimedActionActionId);
-    			CPH.TryGetArg("eventSource", out String TimedActionEventSource);
+    			CPH.TryGetArg("runningActionId", out Guid TimedActionRunningActionId);                                                              /* The unique ID of this running action instance within the queue */
+    			CPH.TryGetArg("actionQueuedAt", out DateTime TimedActionActionQueuedAt);                                                            /* The timestamp of when action was queued */
+    			CPH.TryGetArg("triggerId", out Guid TimedActionTriggerID);                                                                          /* The unique id of the trigger with executed the action */
+    			CPH.TryGetArg("triggerName", out string TimedActionTriggerName);                                                                    /* The name of the trigger which executed the action */
+    			CPH.TryGetArg("actionId", out Guid TimedActionActionId);                                                                            /* The unique ID of the action being executed */
+    			CPH.TryGetArg("eventSource", out String TimedActionEventSource);                                                                    /* The service of the event which triggered the action.*/
     			CPH.TryGetArg("counter", out string TimedActionCounter);
     			CPH.TryGetArg("rawInput", out string TimedActionRawInput);
     			CPH.TryGetArg("rawInputEscaped", out string TimedActionRawInputEscaped);
@@ -1632,9 +1649,10 @@ public class CPHInline
 
             // ==================== Twitch ========================                
             case EventType.TwitchAdRun:
-                CPH.TryGetArg("adLength", out string adLength);
-                CPH.TryGetArg("adScheduled", out bool adScheduled);
-                return $"📺 Ad Break for <strong>{adLength}</strong> seconds • Scheduled: <strong>{adScheduled}</strong>";
+                CPH.TryGetArg("adLength", out string TwitchAdRunAdLength);                                                                          /* The length of the ad in seconds */
+                CPH.TryGetArg("adLengthMs", out string TwitchAdRunAdLengthMs);                                                                      /* The length of the ad in milliseconds */
+                CPH.TryGetArg("adScheduled", out bool TwitchAdRunAdScheduled);                                                                      /* Is the ad scheduled? */
+                return $"📺 Ad Break for <strong>{TwitchAdRunAdLength}</strong> seconds • Scheduled: <strong>{TwitchAdRunAdScheduled}</strong>";
 
             case EventType.TwitchAnnouncement:
                 CPH.TryGetArg("isTest", out bool TwitchAnnouncementIsTest);
@@ -1650,9 +1668,6 @@ public class CPHInline
                 CPH.TryGetArg("rewardCost", out int TwitchAutomaticRewardRedemptionRewardCost);
                 CPH.TryGetArg("rewardType", out string TwitchAutomaticRewardRedemptionRewardType);
                 return $"<strong>{TwitchAutomaticRewardRedemptionUserName}</strong> redeem {TwitchAutomaticRewardRedemptionRewardType} for {TwitchAutomaticRewardRedemptionRewardCost} points";
-
-
-
 
             case EventType.TwitchAutoModMessageHeld:
                 return $"<strong>No description provided</strong>";
@@ -1689,21 +1704,21 @@ public class CPHInline
                 return $"<strong>No description provided</strong>";
 
             case EventType.TwitchBroadcasterChatConnected:
-                CPH.TryGetArg("triggerCategory", out string TwitchBroadcasterChatConnectedTrigger);
+                CPH.TryGetArg("triggerCategory", out string TwitchBroadcasterChatConnectedTrigger);                                                 /* The category of the trigger which executed the action */
                 CPH.TryGetArg("isTest", out bool TwitchBroadcasterChatConnectedIsTest);  
                 CPH.TryGetArg("broadcasterIsOnboarded", out bool TwitchBroadcasterChatConnectedbroadcasterIsOnboarded);
-                CPH.TryGetArg("runningActionId", out Guid TwitchBroadcasterChatConnectedRunningActionId);
-                CPH.TryGetArg("actionQueuedAt", out DateTime TwitchBroadcasterChatConnectedActionQueuedAt);
-                CPH.TryGetArg("triggerId", out Guid TwitchBroadcasterChatConnectedTriggerId);
-                CPH.TryGetArg("triggerName", out string TwitchBroadcasterChatConnectedTriggerName);
-                CPH.TryGetArg("actionId", out Guid TwitchBroadcasterChatConnectedActionId);
-                CPH.TryGetArg("actionName", out string TwitchBroadcasterChatConnectedactionActionName);
-                CPH.TryGetArg("eventSource", out string TwitchBroadcasterChatConnectedEventSource);
-                CPH.TryGetArg("broadcastUser", out string TwitchBroadcasterChatConnectedBroadcastUser);
-                CPH.TryGetArg("broadcastUserName", out string TwitchBroadcasterChatConnectedBroadcastUserName);
-                CPH.TryGetArg("broadcastUserId", out string TwitchBroadcasterChatConnectedBroadcastUserId);
-                CPH.TryGetArg("broadcasterIsAffiliate", out bool TwitchBroadcasterChatConnectedBroadcasterIsAffiliate);
-                CPH.TryGetArg("broadcasterIsPartner", out bool TwitchBroadcasterChatConnectedBroadcasterIsPartner);
+                CPH.TryGetArg("runningActionId", out Guid TwitchBroadcasterChatConnectedRunningActionId);                                           /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime TwitchBroadcasterChatConnectedActionQueuedAt);                                         /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid TwitchBroadcasterChatConnectedTriggerId);                                                       /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string TwitchBroadcasterChatConnectedTriggerName);                                                 /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out Guid TwitchBroadcasterChatConnectedActionId);                                                         /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string TwitchBroadcasterChatConnectedactionActionName);                                             /* The name of the action being executed */ 
+                CPH.TryGetArg("eventSource", out string TwitchBroadcasterChatConnectedEventSource);                                                 /* The service of the event which triggered the action.*/
+                CPH.TryGetArg("broadcastUser", out string TwitchBroadcasterChatConnectedBroadcastUser);                                             /* The Twitch display name of the broadcaster account */
+                CPH.TryGetArg("broadcastUserName", out string TwitchBroadcasterChatConnectedBroadcastUserName);                                     /* The Twitch user name of the broadcaster account */
+                CPH.TryGetArg("broadcastUserId", out string TwitchBroadcasterChatConnectedBroadcastUserId);                                         /* The Twitch user ID of the broadcaster account */
+                CPH.TryGetArg("broadcasterIsAffiliate", out bool TwitchBroadcasterChatConnectedBroadcasterIsAffiliate);                             /* Is the broadcaster an affiliate? */
+                CPH.TryGetArg("broadcasterIsPartner", out bool TwitchBroadcasterChatConnectedBroadcasterIsPartner);                                 /* Is the broadcaster an partner ? */
                 CPH.TryGetArg("rawInputEscaped", out string TwitchBroadcasterChatConnectedrawInputEscaped);
                 CPH.TryGetArg("message", out string TwitchBroadcasterChatConnectedmessage);
                 return $"Chat is <strong>Connected</strong>";
@@ -1748,7 +1763,7 @@ public class CPHInline
                 return $"{TwitchCharityProgressCharityName} Updated {TwitchCharityProgressCharityCurrentCurrency} {TwitchCharityProgressCharityCurrentValue} <strong>Target</strong> {TwitchCharityProgressCharityTargetCurrency} {TwitchCharityProgressCharityTargetValue}";
 
             case EventType.TwitchCharityStarted:
-                CPH.TryGetArg("triggerCategory", out string TwitchCharityStartedTriggerCategory);
+                CPH.TryGetArg("triggerCategory", out string TwitchCharityStartedTriggerCategory);                                                   /* The category of the trigger which executed the action */
                 CPH.TryGetArg("broadcasterIsOnboarded", out string TwitchCharityStartedBroadcasterIsOnboarded);
                 CPH.TryGetArg("charity.name", out string TwitchCharityStartedCharityName);
                 CPH.TryGetArg("charity.logo", out string TwitchCharityStartedCharityLogo);
@@ -1759,7 +1774,7 @@ public class CPHInline
                 CPH.TryGetArg("charity.targetAmount.value", out string TwitchCharityStartedCharityTargetAmountValue);
                 CPH.TryGetArg("charity.targetAmount.valueMinor", out string TwitchCharityStartedCharityTargetAmountValueMinor);
                 CPH.TryGetArg("charity.targetAmount.currency", out string TwitchCharityStartedCharityTargetAmountCurrency);
-                CPH.TryGetArg("eventSource", out string TwitchCharityStartedEventSource);
+                CPH.TryGetArg("eventSource", out string TwitchCharityStartedEventSource);                                                           /* The service of the event which triggered the action.*/
                 return $"{TwitchCharityStartedCharityName} <strong>Started</strong> {TwitchCharityStartedCharityTargetAmountCurrency} {TwitchCharityStartedCharityTargetAmountValue}";
                 
             case EventType.TwitchChatCleared:
@@ -1852,24 +1867,24 @@ public class CPHInline
                 CPH.TryGetArg("contributed", out int TwitchCommunityGoalContributionContributed);
                 CPH.TryGetArg("title", out string TwitchCommunityGoalContributionTitle);
                 CPH.TryGetArg("userName", out string TwitchCommunityGoalContributionUserName);
-                CPH.TryGetArg("runningActionId", out string TwitchCommunityGoalContributionRunningActionId);
-                CPH.TryGetArg("actionQueuedAt", out DateTime TwitchCommunityGoalContributionActionQueuedAt);
-                CPH.TryGetArg("triggerId", out Guid TwitchCommunityGoalContributionTriggerId);
-                CPH.TryGetArg("triggerName", out string TwitchCommunityGoalContributionTriggerName);
-                CPH.TryGetArg("actionId", out Guid TwitchCommunityGoalContributionActionId);
-                CPH.TryGetArg("actionName", out string TwitchCommunityGoalContributionActionName);
+                CPH.TryGetArg("runningActionId", out string TwitchCommunityGoalContributionRunningActionId);                                        /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime TwitchCommunityGoalContributionActionQueuedAt);                                        /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid TwitchCommunityGoalContributionTriggerId);                                                      /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string TwitchCommunityGoalContributionTriggerName);                                                /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out Guid TwitchCommunityGoalContributionActionId);                                                        /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string TwitchCommunityGoalContributionActionName);                                                  /* The name of the action being executed */ 
                 CPH.TryGetArg("userType", out string TwitchCommunityGoalContributionUserType);
                 CPH.TryGetArg("userGroups", out string TwitchCommunityGoalContributionUserGroup);
                 CPH.TryGetArg("isSubscribed", out bool TwitchCommunityGoalContributionIsSubscribed);
                 CPH.TryGetArg("isModerator", out bool TwitchCommunityGoalContributionIsModerator);
                 CPH.TryGetArg("isVip", out bool TwitchCommunityGoalContributionIsVip);
                 CPH.TryGetArg("userPreviousActive", out DateTime TwitchCommunityGoalContributionUserPreviousActive);
-                CPH.TryGetArg("eventSource", out string TwitchCommunityGoalContributionEventSource);
-                CPH.TryGetArg("broadcastUser", out string TwitchCommunityGoalContributionBroadcastUser);
-                CPH.TryGetArg("broadcastUserName", out string TwitchCommunityGoalContributionBroadcastUserName);
-                CPH.TryGetArg("broadcastUserId", out string TwitchCommunityGoalContributionBroadcastUserID);
-                CPH.TryGetArg("broadcasterIsAffiliate", out bool TwitchCommunityGoalContributionBroadcasterIsAffiliate);
-                CPH.TryGetArg("broadcasterIsPartner", out bool TwitchCommunityGoalContributionBroadcasterIsPartner);
+                CPH.TryGetArg("eventSource", out string TwitchCommunityGoalContributionEventSource);                                                /* The service of the event which triggered the action.*/
+                CPH.TryGetArg("broadcastUser", out string TwitchCommunityGoalContributionBroadcastUser);                                            /* The Twitch display name of the broadcaster account */
+                CPH.TryGetArg("broadcastUserName", out string TwitchCommunityGoalContributionBroadcastUserName);                                    /* The Twitch user name of the broadcaster account */
+                CPH.TryGetArg("broadcastUserId", out string TwitchCommunityGoalContributionBroadcastUserID);                                        /* The Twitch user ID of the broadcaster account */
+                CPH.TryGetArg("broadcasterIsAffiliate", out bool TwitchCommunityGoalContributionBroadcasterIsAffiliate);                            /* Is the broadcaster an affiliate? */
+                CPH.TryGetArg("broadcasterIsPartner", out bool TwitchCommunityGoalContributionBroadcasterIsPartner);                                /* Is the broadcaster an partner ? */
                 return $"{TwitchCommunityGoalContributionUserName} Contributed {TwitchCommunityGoalContributionContributed} points<strong> Days Left </strong>{TwitchCommunityGoalContributionDaysLeft}";
 
             case EventType.TwitchCommunityGoalEnded:
@@ -1908,7 +1923,14 @@ public class CPHInline
                 return $"<strong>{TwitchGiftSubGifter}</strong> gifted a sub to <strong>{TwitchGiftSubRecipient}</strong> {TwitchGiftSubTier}";
 
             case EventType.TwitchGoalBegin:
+                CPH.TryGetArg("goal.currentAmount", out string TwitchGoalBeginGoalCurrentAmount);                                                       /* The current amount of this channel goal */
+                CPH.TryGetArg("goal.description", out string TwitchGoalBeginGoalDescription);                                                           /* The description of this channel goal */
+                CPH.TryGetArg("goal.id", out string TwitchGoalBeginGoalId);                                                                             /* The unique id of this channel goal */
+                CPH.TryGetArg("goal.startedAt", out DateTime TwitchGoalBeginGoalStartedAt);                                                             /* The timestamp that the channel goal started */
+                CPH.TryGetArg("goal.targetAmount", out string TwitchGoalBeginGoalTargetAmount);                                                         /* The target of this channel goal */
+                CPH.TryGetArg("goal.type", out string TwitchGoalBeginGoalType);                                                                         /* The type of this channel goal */
                 return $"<strong>No description provided</strong>";
+
             case EventType.TwitchGoalEnd:
                 return $"<strong>No description provided</strong>";
             case EventType.TwitchGoalProgress:
@@ -2086,21 +2108,21 @@ public class CPHInline
                 return $"<strong>No description provided</strong>";
 
             case EventType.TwitchPresentViewers:
-                CPH.TryGetArg("triggerCategory", out string TwitchPresentViewersTriggerCategory); /*Twitch/General*/
+                CPH.TryGetArg("triggerCategory", out string TwitchPresentViewersTriggerCategory);                                                   /* The category of the trigger which executed the action */
                 CPH.TryGetArg("broadcasterIsOnboarded", out bool TwitchPresentViewersbroadcasterIsOnboarded); /*False/True*/
-                CPH.TryGetArg("runningActionId", out Guid TwitchPresentViewersRunningActionId); /*e0c55bde-7135-4896-9a93-0f27871bec90*/
-                CPH.TryGetArg("actionQueuedAt", out DateTime TwitchPresentViewersActionQueuedAt); /*2025-11-22 14:58:03*/
-                CPH.TryGetArg("triggerId", out Guid TwitchPresentViewersTriggerId); /*58109bbe-d273-44a3-81e6-c0c6948ba941*/
-                CPH.TryGetArg("triggerName", out string TwitchPresentViewersTriggerName); /*Present Viewers*/
-                CPH.TryGetArg("actionId", out Guid TwitchPresentViewersActionId); /*f194d936-2fdf-4c24-a76c-2d3df5220b90*/
-                CPH.TryGetArg("actionName", out string TwitchPresentViewersActionName);  /*Store Multi-Platform Present Viewers*/
+                CPH.TryGetArg("runningActionId", out Guid TwitchPresentViewersRunningActionId);                                                     /* The unique ID of this running action instance within the queue */
+                CPH.TryGetArg("actionQueuedAt", out DateTime TwitchPresentViewersActionQueuedAt);                                                   /* The timestamp of when action was queued */
+                CPH.TryGetArg("triggerId", out Guid TwitchPresentViewersTriggerId);                                                                 /* The unique id of the trigger with executed the action */
+                CPH.TryGetArg("triggerName", out string TwitchPresentViewersTriggerName);                                                           /* The name of the trigger which executed the action */
+                CPH.TryGetArg("actionId", out Guid TwitchPresentViewersActionId);                                                                   /* The unique ID of the action being executed */
+                CPH.TryGetArg("actionName", out string TwitchPresentViewersActionName);                                                             /* The name of the action being executed */ 
                 CPH.TryGetArg("isLive", out bool TwitchPresentViewersIslive); /*False*/
-                CPH.TryGetArg("eventSource", out string TwitchPresentViewersEventSource); /*twitch*/
-                CPH.TryGetArg("broadcastUser", out string TwitchPresentViewersBroadcastUser); /*DonutPlayingGames*/
-                CPH.TryGetArg("broadcastUserName", out string TwitchPresentViewersBroadcastUserName); /*donutplayinggames*/
-                CPH.TryGetArg("broadcastUserId", out string TwitchPresentViewersBroadcastUserId); /*52548717*/
-                CPH.TryGetArg("broadcasterIsAffiliate", out bool TwitchPresentViewersBroadcasterIsAffiliate); /*False/True*/
-                CPH.TryGetArg("broadcasterIsPartner", out bool TwitchPresentViewersBroadcasterIsPartner);  /*False/True*/
+                CPH.TryGetArg("eventSource", out string TwitchPresentViewersEventSource);                                                           /* The service of the event which triggered the action.*/
+                CPH.TryGetArg("broadcastUser", out string TwitchPresentViewersBroadcastUser);                                                       /* The Twitch display name of the broadcaster account */
+                CPH.TryGetArg("broadcastUserName", out string TwitchPresentViewersBroadcastUserName);                                               /* The Twitch user name of the broadcaster account */
+                CPH.TryGetArg("broadcastUserId", out string TwitchPresentViewersBroadcastUserId);                                                   /* The Twitch user ID of the broadcaster account */
+                CPH.TryGetArg("broadcasterIsAffiliate", out bool TwitchPresentViewersBroadcasterIsAffiliate);                                       /* Is the broadcaster an affiliate? */
+                CPH.TryGetArg("broadcasterIsPartner", out bool TwitchPresentViewersBroadcasterIsPartner);                                           /* Is the broadcaster an partner ? */
                 return $"📊 {TwitchPresentViewersTriggerName} by <strong>{TwitchPresentViewersActionName}</strong>";
 
 
@@ -2122,7 +2144,7 @@ public class CPHInline
                 return $"<strong>No description provided</strong>";
 
             case EventType.TwitchRaidStart:
-                CPH.TryGetArg("broadcastUser", out string TwitchRaidStartbroadcastUser);
+                CPH.TryGetArg("broadcastUser", out string TwitchRaidStartbroadcastUser);                                                            /* The Twitch display name of the broadcaster account */
                 CPH.TryGetArg("raidUser", out string TwitchRaidStartraidUser);
                 CPH.TryGetArg("raidUserProfileImageUrl", out string TwitchRaidStartRaidUserProfileImageUrl);
                 CPH.TryGetArg("viewers", out int TwitchRaidStartViewers);
@@ -2250,11 +2272,11 @@ public class CPHInline
                 return $"<strong>No description provided</strong>";
 
             case EventType.TwitchUpcomingAd:
-                CPH.TryGetArg("triggerName", out string TwitchUpcomingAdTriggerName);
-                CPH.TryGetArg("minutes", out string TwitchUpcomingAdminutes);
-                CPH.TryGetArg("snoozesLeft", out string TwitchUpcomingAdSnoozesLeft);
-                CPH.TryGetArg("adLength", out string TwitchUpcomingAdLength);
-                CPH.TryGetArg("nextAdAt", out string TwitchUpcomingAdNextAdAt);
+                CPH.TryGetArg("triggerName", out string TwitchUpcomingAdTriggerName);                                                               /* The name of the trigger which executed the action */
+                CPH.TryGetArg("minutes", out string TwitchUpcomingAdminutes);                                                                       /* The number of minutes until the ad run will start */
+                CPH.TryGetArg("snoozesLeft", out string TwitchUpcomingAdSnoozesLeft);                                                               /* The maximum number of snoozes left */
+                CPH.TryGetArg("adLength", out string TwitchUpcomingAdLength);                                                                       /* The length of the upcoming ad run, in seconds */
+                CPH.TryGetArg("nextAdAt", out string TwitchUpcomingAdNextAdAt);                                                                     /* The exact UTC date and time that the next ad run will start */
                 return $"📺 Ad Break in <strong>{TwitchUpcomingAdminutes}</strong> minutes • total: <strong>{TwitchUpcomingAdSnoozesLeft}</strong> snoozes remaining";
 
             case EventType.TwitchUserBanned:
@@ -2660,15 +2682,16 @@ public class CPHInline
         html.AppendLine("            </div>");
         html.AppendLine("        </div>");
 
-        // Correct event loop
+        // Correct event loop with shortened source
         for (int i = events.Count - 1; i >= 0; i--)
         {
             var evt = events[i];
             string platform = GetPlatform(evt.Source);
+            string shortSource = ShortenEventSource(evt.Source); // ADDED THIS LINE
 
             html.AppendLine($"        <div class=\"event {evt.Source}\" data-platform=\"{platform}\">");
             html.AppendLine($"            <span class=\"timestamp\">{evt.Timestamp:HH:mm:ss}</span>");
-            html.AppendLine($"            <span class=\"source\">{evt.Source}</span>");
+            html.AppendLine($"            <span class=\"source\">{shortSource}</span>"); // CHANGED THIS LINE
             html.AppendLine($"            <span class=\"details\">{evt.Details}</span>");
             html.AppendLine("        </div>");
         }
@@ -2761,15 +2784,17 @@ public class CPHInline
         html.AppendLine("            </div>");
         html.AppendLine("        </div>");
 
-        // Events - FIXED: Only use Details, completely ignore RawData
+        // Events - with shortened source
         html.AppendLine("        <div id=\"eventsContainer\">");
         for (int i = events.Count - 1; i >= 0; i--)
         {
             EventData evt = events[i];
             string platform = GetPlatform(evt.Source);
+            string shortSource = ShortenEventSource(evt.Source); // ADDED THIS LINE
+            
             html.AppendLine($"        <div class=\"event {evt.Source}\" data-platform=\"{platform}\" data-source=\"{evt.Source}\" data-search=\"{StripHtml(evt.Details).ToLower()}\">");
             html.AppendLine($"            <span class=\"timestamp\">{evt.Timestamp:HH:mm:ss}</span>");
-            html.AppendLine($"            <span class=\"source\">{evt.Source}</span>");
+            html.AppendLine($"            <span class=\"source\">{shortSource}</span>"); // CHANGED THIS LINE
             html.AppendLine($"            <span class=\"details\">{evt.Details}</span>");
             html.AppendLine("        </div>");
         }
@@ -2950,7 +2975,7 @@ public class CPHInline
         if (source.StartsWith("Kick")) return "Kick";
         if (source.StartsWith("Kofi")) return "Kofi";
         if (source.StartsWith("MeldStudio")) return "MeldStudio";
-        if (source.StartsWith("Obs")) return "Obs";
+        if (source.StartsWith("Obs")) return "ObsStudio";
         if (source.StartsWith("Pally")) return "Pally";
         if (source.StartsWith("Patreon")) return "Patreon";
         if (source.StartsWith("Pulsoid")) return "Pulsoid";
